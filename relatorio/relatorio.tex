@@ -254,30 +254,30 @@ A distribuição, cujo comportamento empírico é ilustrado na Figura \ref{fig:d
 Nesta seção, descrevo a implementação manual de algoritmos clássicos de grafos no diretório \path{algoritmos/} e a sua aplicação prática no grafo de Zachary. Para verificar preliminarmente o funcionamento correto de cada implementação, utilizei o script de demonstração \path{scripts/executar_algoritmos.py}.
 
 \subsection{BFS (Busca em Largura)}
-A busca em largura explora sistematicamente as arestas do grafo para encontrar todos os vértices acessíveis a partir de uma origem, computando as menores distâncias em termos de número de saltos. A complexidade teórica é $O(V + E)$ em listas de adjacência.
+A busca em largura explora sistematicamente as arestas do grafo para encontrar todos os vértices acessíveis a partir de uma origem, computando as menores distâncias em termos de número de saltos. A complexidade teórica é O(V + E) em listas de adjacência.
 
 \subsection{DFS (Busca em Profundidade)}
-A busca em profundidade explora o grafo percorrendo caminhos de forma recursiva até atingir vértices sem vizinhos não visitados, retrocedendo em seguida. É a base para algoritmos de ordenação topológica e conexidade. A complexidade teórica é $O(V + E)$.
+A busca em profundidade explora o grafo percorrendo caminhos de forma recursiva até atingir vértices sem vizinhos não visitados, retrocedendo em seguida. É a base para algoritmos de ordenação topológica e conexidade. A complexidade teórica é O(V + E).
 
 \subsection{Verificação de Eulerianidade}
-Verifica se um grafo admite um circuito euleriano ou caminho euleriano. Para grafos não direcionados conexos, exige que todos os vértices tenham grau par (circuito) ou exatamente 2 vértices tenham grau ímpar (caminho). A complexidade teórica é $O(V + E)$.
+Verifica se um grafo admite um circuito euleriano ou caminho euleriano. Para grafos não direcionados conexos, exige que todos os vértices tenham grau par (circuito) ou exatamente 2 vértices tenham grau ímpar (caminho). A complexidade teórica é O(V + E).
 O grafo de Zachary possui vários vértices com grau ímpar (como John A., grau 17), logo não é Euleriano.
 
 \subsection{Algoritmo de Dijkstra}
-Determina o caminho mínimo de uma única origem para todos os outros nós em grafos com pesos não-negativos nas arestas. A implementação utiliza uma fila de prioridade mínima (heap binária), fornecendo uma complexidade de $O((V + E) \log V)$. Para o benchmark, atribui pesos às arestas na faixa $[1, 5]$.
+Determina o caminho mínimo de uma única origem para todos os outros nós em grafos com pesos não-negativos nas arestas. A implementação utiliza uma fila de prioridade mínima (heap binária), fornecendo uma complexidade de O((V + E) log V). Para o benchmark, atribui pesos às arestas na faixa $[1, 5]$.
 
 \subsection{Algoritmo de Bellman-Ford}
-Resolve o problema de caminho mínimo a partir de uma única origem em grafos com pesos arbitrários, sendo capaz de detectar a presença de ciclos de peso negativo. Ele opera relaxando todas as arestas do grafo $|V| - 1$ vezes, resultando em uma complexidade teórica de $O(V \cdot E)$.
+Resolve o problema de caminho mínimo a partir de uma única origem em grafos com pesos arbitrários, sendo capaz de detectar a presença de ciclos de peso negativo. Ele opera relaxando todas as arestas do grafo $|V| - 1$ vezes, resultando em uma complexidade teórica de O(V * E).
 
 \subsection{Algoritmo de Floyd-Warshall}
-Calcula os caminhos mínimos entre todos os pares de vértices do grafo de forma dinâmica. Sua complexidade teórica é $O(V^3)$.
+Calcula os caminhos mínimos entre todos os pares de vértices do grafo de forma dinâmica. Sua complexidade teórica é O(V\textsuperscript{3}).
 
 \subsection{Algoritmo de Tarjan (SCC)}
-Identifica as componentes fortemente conexas (SCCs) em grafos direcionados. Ele baseia-se em uma única varredura DFS que utiliza uma pilha para rastrear os nós do componente atual. Para ser aplicado ao grafo de Zachary, as arestas foram tratadas como bidirecionais, resultando em um único componente conexo. A complexidade teórica é $O(V + E)$.
+Identifica as componentes fortemente conexas (SCCs) em grafos direcionados. Ele baseia-se em uma única varredura DFS que utiliza uma pilha para rastrear os nós do componente atual. Para ser aplicado ao grafo de Zachary, as arestas foram tratadas como bidirecionais, resultando em um único componente conexo. A complexidade teórica é O(V + E).
 
 \subsection{Algoritmo de Kruskal (MST)}
-Constrói a Árvore Geradora Mínima (MST) de um grafo não direcionado conectado. O algoritmo ordena todas as arestas por peso e utiliza uma estrutura de dados de conjuntos disjuntos ( {DSU}) com compressão de caminhos para evitar ciclos. A complexidade teórica é $O(E \log V)$ devido à ordenação das arestas.
-Como o grafo possui 34 vértices, a árvore geradora mínima resultante contém exatamente 33 arestas, totalizando peso 51,0 com a minha distribuição de pesos.
+Constrói a Árvore Geradora Mínima (MST) de um grafo não direcionado conectado. O algoritmo ordena todas as arestas por peso e utiliza uma estrutura de dados de conjuntos disjuntos ( {DSU}) com compressão de caminhos para evitar ciclos. A complexidade teórica é O(E log V) devido à ordenação das arestas.
+Como o grafo possui 34 vertices, a árvore geradora mínima resultante contém exatamente 33 arestas, totalizando peso 51,0 com a minha distribuição de pesos.
 
 \subsection{Análise Experimental de Desempenho}
 
@@ -301,24 +301,24 @@ A Tabela \ref{tab:benchmark} apresenta os tempos obtidos em microssegundos ($\mu
     \toprule
     Algoritmo & Complexidade & Média ($\bar{x}$, $\mu$s) & Desv. Padrão ($\sigma$, $\mu$s) & IC 95\% ($\mu$s) \\
     \midrule
-    Busca em Largura (BFS) & $O(V + E)$ & 8.743 & 0.364 & [8.642, 8.844] \\
-    Busca em Profundidade (DFS) & $O(V + E)$ & 9.631 & 1.438 & [9.232, 10.029] \\
-    Verificação de Eulerianidade & $O(V + E)$ & 11.431 & 0.270 & [11.356, 11.506] \\
-    Algoritmo de Dijkstra & $O((V + E) \log V)$ & 40.114 & 1.916 & [39.583, 40.646] \\
-    Algoritmo de Bellman-Ford & $O(V \cdot E)$ & 695.052 & 24.871 & [688.158, 701.946] \\
-    Algoritmo de Floyd-Warshall & $O(V^3)$ & 4958.726 & 101.976 & [4930.460, 4986.992] \\
-    Algoritmo de Tarjan (SCC) & $O(V + E)$ & 45.683 & 0.987 & [45.409, 45.956] \\
-    Algoritmo de Kruskal (MST) & $O(E \log V)$ & 104.173 & 3.983 & [103.069, 105.277] \\
+    Busca em Largura (BFS) & O(V + E) & 8.743 & 0.364 & [8.642, 8.844] \\
+    Busca em Profundidade (DFS) & O(V + E) & 9.631 & 1.438 & [9.232, 10.029] \\
+    Verificação de Eulerianidade & O(V + E) & 11.431 & 0.270 & [11.356, 11.506] \\
+    Algoritmo de Dijkstra & O((V + E) log V) & 40.114 & 1.916 & [39.583, 40.646] \\
+    Algoritmo de Bellman-Ford & O(V * E) & 695.052 & 24.871 & [688.158, 701.946] \\
+    Algoritmo de Floyd-Warshall & O(V\textsuperscript{3}) & 4958.726 & 101.976 & [4930.460, 4986.992] \\
+    Algoritmo de Tarjan (SCC) & O(V + E) & 45.683 & 0.987 & [45.409, 45.956] \\
+    Algoritmo de Kruskal (MST) & O(E log V) & 104.173 & 3.983 & [103.069, 105.277] \\
     \bottomrule
   \end{tabular}
 \end{table*}
 
 Os resultados empíricos da Tabela \ref{tab:benchmark} estão em total conformidade com a análise assintótica clássica da teoria dos grafos:
 \begin{enumerate}
-    \item \textbf{Buscas de Ordem Linear:} BFS ($8,743$ $\mu$s), DFS ($9,631$ $\mu$s) e a verificação de Eulerianidade ($11,431$ $\mu$s) apresentaram os menores tempos. Sendo algoritmos de complexidade $O(V + E)$, realizam poucas operações elementares em redes pequenas ($V=34, E=78$).
-    \item \textbf{Tarjan (SCC):} Embora linear $O(V + E)$, Tarjan ($45,683$ $\mu$s) apresenta um custo constante maior em comparação ao BFS/DFS devido à manutenção explícita da pilha de nós e dos vetores auxiliares de controle.
+    \item \textbf{Buscas de Ordem Linear:} BFS ($8,743$ $\mu$s), DFS ($9,631$ $\mu$s) e a verificação de Eulerianidade ($11,431$ $\mu$s) apresentaram os menores tempos. Sendo algoritmos de complexidade O(V + E), realizam poucas operações elementares em redes pequenas ($V=34, E=78$).
+    \item \textbf{Tarjan (SCC):} Embora linear O(V + E), Tarjan ($45,683$ $\mu$s) apresenta um custo constante maior em comparação ao BFS/DFS devido à manutenção explícita da pilha de nós e dos vetores auxiliares de controle.
     \item \textbf{Dijkstra vs. Bellman-Ford:} Dijkstra ($40,114$ $\mu$s) foi aproximadamente 17 vezes mais rápido que Bellman-Ford ($695,052$ $\mu$s). O Dijkstra explora caminhos de forma gulosa com fila de prioridade, enquanto o Bellman-Ford realiza relaxações sistemáticas de todas as arestas por $V-1$ iterações, gerando muito mais operações.
-    \item \textbf{Floyd-Warshall:} Registrou o maior tempo ($4958,726$ $\mu$s), sendo 700 vezes mais lento que os lineares. Isso justifica-se por sua estrutura de loops triplos aninhados $O(V^3)$, cuja complexidade se sobressai mesmo para um pequeno número de nós.
+    \item \textbf{Floyd-Warshall:} Registrou o maior tempo ($4958,726$ $\mu$s), sendo 700 vezes mais lento que os lineares. Isso justifica-se por sua estrutura de loops triplos aninhados O(V\textsuperscript{3}), cuja complexidade se sobressai mesmo para um pequeno número de nós.
 \end{enumerate}
 
 Todos os desvios padrões calculados mostram dispersões baixas em relação à média, o que garante a precisão e a confiabilidade das medições efetuadas. A margem estreita obtida para o Intervalo de Confiança a 95\% consolida a robustez estatística dos dados levantados.

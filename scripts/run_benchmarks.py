@@ -100,14 +100,14 @@ for name, stats in results.items():
     }[name]
     
     complexity = {
-        "BFS": "$O(V + E)$",
-        "DFS": "$O(V + E)$",
-        "Eulerian Check": "$O(V + E)$",
-        "Dijkstra": "$O((V + E) \\log V)$",
-        "Bellman-Ford": "$O(V \\cdot E)$",
-        "Floyd-Warshall": "$O(V^3)$",
-        "Tarjan SCC": "$O(V + E)$",
-        "Kruskal MST": "$O(E \\log V)$"
+        "BFS": "O(V + E)",
+        "DFS": "O(V + E)",
+        "Eulerian Check": "O(V + E)",
+        "Dijkstra": "O((V + E) log V)",
+        "Bellman-Ford": "O(V * E)",
+        "Floyd-Warshall": "O(V^3)",
+        "Tarjan SCC": "O(V + E)",
+        "Kruskal MST": "O(E log V)"
     }[name]
     
     mean_str = f"{stats['mean']:.3f}"
