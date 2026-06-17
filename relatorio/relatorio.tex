@@ -2,6 +2,8 @@
 
 \usepackage{lmodern}
 \usepackage{xurl}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 \graphicspath{{../graficos/}{../}}
 
 %webmedia.cls is adapted from acmart.cls for use in Proceedings of the Brazilian Symposium on Multimedia and the Web (WebMedia)
@@ -215,8 +217,34 @@ A distribuição, cujo comportamento empírico é ilustrado na Figura \ref{fig:d
 
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.9\linewidth]{karate_club_degree_distribution}
-  \caption{Distribuição de Graus (Frequência vs. Grau $k$) da rede Zachary's Karate Club.}
+  \begin{tikzpicture}
+    \begin{axis}[
+        ybar,
+        ymin=0, ymax=12,
+        xmin=0, xmax=18,
+        xlabel={Grau ($k$)},
+        ylabel={Frequência},
+        xtick={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17},
+        ytick={0,2,4,6,8,10,12},
+        width=\linewidth,
+        height=5.5cm,
+        bar width=4pt,
+        ymajorgrids=true,
+        grid style={dashed,gray!30},
+        axis x line=bottom,
+        axis y line=left,
+        nodes near coords,
+        every node near coord/.append style={font=\tiny, yshift=2pt},
+        tick label style={font=\tiny},
+        label style={font=\small},
+        title style={font=\small\bfseries}
+      ]
+      \addplot[fill=teal!70!black, draw=teal!50!black] coordinates {
+        (1,1) (2,11) (3,6) (4,6) (5,3) (6,2) (7,0) (8,0) (9,1) (10,1) (11,0) (12,1) (13,0) (14,0) (15,0) (16,1) (17,1)
+      };
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Distribuição de Graus (Frequência vs. Grau $k$) da rede Zachary's Karate Club gerada nativamente.}
   \label{fig:degree_dist}
 \end{figure}
 
@@ -264,11 +292,14 @@ onde $\bar{x}$ representa o tempo médio observado e $\sigma$ o desvio padrão a
 A Tabela \ref{tab:benchmark} apresenta os tempos obtidos em microssegundos ($\mu$s).
 
 \begin{table*}[t]
-  \caption{Benchmark de Tempo de Execução dos Algoritmos (n = 50 rodadas)}
+  \centering
+  \caption{Benchmark de Tempo de Execução dos Algoritmos ($n = 50$ rodadas)}
   \label{tab:benchmark}
+  \setlength{\tabcolsep}{4pt} 
+  \small 
   \begin{tabular}{lcccc}
     \toprule
-    Algoritmo & Complexidade Teórica & Média ($\bar{x}$, $\mu$s) & Desvio Padrão ($\sigma$, $\mu$s) & Intervalo de Confiança 95\% ($\mu$s) \\
+    Algoritmo & Complexidade & Média ($\bar{x}$, $\mu$s) & Desv. Padrão ($\sigma$, $\mu$s) & IC 95\% ($\mu$s) \\
     \midrule
     Busca em Largura (BFS) & $O(V + E)$ & 8.743 & 0.364 & [8.642, 8.844] \\
     Busca em Profundidade (DFS) & $O(V + E)$ & 9.631 & 1.438 & [9.232, 10.029] \\
