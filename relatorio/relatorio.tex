@@ -368,51 +368,7 @@ Em termos práticos, a propriedade de pequeno mundo nesta rede social indica que
     \item \textbf{Coesão Local:} Os membros formam fortes subgrupos e cliques coesos de amizades (alto $C_{obs}$), o que gera um ambiente de alta confiança mútua e reforço social dentro das subcomunidades locais, propiciando a polarização de ideias antes da cisão.
 \end{itemize}
 
-O código-fonte Python implementado do zero para este cálculo é listado abaixo:
-
-\begin{verbatim}
-# Funções "from scratch" para cálculo de L e C
-def bfs_distances(graph, start):
-    dist = {u: float('inf') for u in graph}
-    dist[start] = 0
-    queue = [start]
-    while queue:
-        u = queue.pop(0)
-        for v in graph[u]:
-            if dist[v] == float('inf'):
-                dist[v] = dist[u] + 1
-                queue.append(v)
-    return dist
-
-def average_path_length(graph):
-    total_dist, pairs = 0, 0
-    nodes = list(graph.keys())
-    for u in nodes:
-        dists = bfs_distances(graph, u)
-        for v in nodes:
-            if u != v and dists[v] != float('inf'):
-                total_dist += dists[v]
-                pairs += 1
-    return total_dist / pairs if pairs > 0 else float('inf')
-
-def clustering_coefficient(graph):
-    c_vals = []
-    for u in graph:
-        neighbors = graph[u]
-        k = len(neighbors)
-        if k < 2:
-            c_vals.append(0.0)
-            continue
-        edges = 0
-        n_set = set(neighbors)
-        for v in neighbors:
-            for w in graph[v]:
-                if w in n_set:
-                    edges += 1
-        edges = edges // 2
-        c_vals.append(edges / (k * (k - 1) // 2))
-    return sum(c_vals) / len(c_vals)
-\end{verbatim}
+A implementação detalhada das funções executadas do zero para o cálculo de agrupamento local médio e comprimento de caminho a partir da busca em largura é descrita e documentada no script \path{scripts/analise_estrutural.py}.
 
 \subsection{Lei de Potência}
 \label{subsec:power_law}
@@ -432,18 +388,7 @@ A distribuição empírica de graus **não** sugere uma lei de potência pura de
 \end{itemize}
 Apesar disso, a distribuição é marcadamente assimétrica com cauda à direita. Embora não siga uma lei de potência formal, a rede demonstra a presença de dois super-hubs, o que constitui um estágio embrionário da dinâmica de conexão preferencial típica de redes livres de escala.
 
-O código implementado do zero para estimar o expoente $\gamma$ é:
-
-\begin{verbatim}
-# Estimação do expoente de lei de potência via log-log
-degrees = [len(adj_list[u]) for u in adj_list]
-unique_degrees, counts = np.unique(degrees, return_counts=True)
-log_k = np.log(unique_degrees)
-log_freq = np.log(counts)
-slope, intercept = np.polyfit(log_k, log_freq, 1)
-gamma = -slope
-print(f"Expoente gamma estimado: {gamma:.4f}")
-\end{verbatim}
+O procedimento de regressão linear no espaço log-log e estimação empírica do expoente $\gamma$ está implementado no script \path{scripts/analise_estrutural.py}.
 
 \subsection{Simulação de Robustez da Rede}
 \label{subsec:robustness}
@@ -476,40 +421,7 @@ A rede demonstra um comportamento típico de sistemas complexos estruturados em 
     \item \textbf{Vulnerabilidade Crítica a Ataques:} A remoção direcionada dos hubs (Nó 0 e Nó 33) altera drasticamente a estrutura. O grafo deixa de ser conexo e fragmenta-se em **três componentes isolados** (um componente maior de tamanho 26, um de tamanho 5 e um nó isolado de tamanho 1). A distância média no componente principal se eleva significativamente para $2,591$.
 \end{itemize}
 
-O código Python para a simulação de robustez é apresentado abaixo:
-
-\begin{verbatim}
-# Simulação de robustez
-def get_connected_components(graph):
-    visited = set()
-    components = []
-    for node in graph:
-        if node not in visited:
-            comp, queue = [], [node]
-            visited.add(node)
-            while queue:
-                u = queue.pop(0)
-                comp.append(u)
-                for v in graph[u]:
-                    if v not in visited:
-                        visited.add(v)
-                        queue.append(v)
-            components.append(comp)
-    return components
-
-# A. Remoção Aleatória (1000 rodadas)
-lcc_sizes, l_vals = [], []
-for _ in range(1000):
-    to_remove = random.sample(list(adj_list.keys()), 2)
-    sub = {u: [v for v in adj_list[u] if v not in to_remove] 
-           for u in adj_list if u not in to_remove}
-    comps = get_connected_components(sub)
-    lcc_size = max(len(c) for c in comps)
-    lcc_sizes.append(lcc_size)
-    lcc_nodes = max(comps, key=len)
-    lcc_g = {u: [v for v in sub[u] if v in lcc_nodes] for u in lcc_nodes}
-    l_vals.append(average_path_length(lcc_g))
-\end{verbatim}
+Os algoritmos e funções auxiliares (como a busca em largura modificada para identificação de componentes conexos) e o loop principal de simulação numérica por Monte Carlo estão definidos em detalhes no script \path{scripts/analise_estrutural.py}.
 
 \subsection{Comparação com Modelos Clássicos}
 \label{subsec:modelos_classicos}
