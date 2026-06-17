@@ -1,0 +1,451 @@
+\documentclass[sigconf]{acmart}
+
+\usepackage[utf8]{inputenc}
+\usepackage[portuguese]{babel}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{graphicx}
+
+% Configurações para códigos de exemplo
+\lstset{
+  language=Python,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{purple},
+  showstringspaces=false,
+  breaklines=true,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  frame=single
+}
+
+% Direitos autorais e informações da conferência (CIKM '20)
+\setcopyright{acmcopyright}
+\copyrightyear{2020}
+\acmYear{2020}
+\acmDOI{10.1145/3340531.3412757}
+\acmConference[CIKM '20]{Proceedings of the 29th ACM International Conference on Information and Knowledge Management}{October 19--23, 2020}{Virtual Event, Ireland}
+\acmBooktitle{Proceedings of the 29th ACM International Conference on Information and Knowledge Management (CIKM '20), October 19--23, 2020, Virtual Event, Ireland}
+\acmPrice{15.00}
+\acmISBN{978-1-4503-6859-9/20/10}
+
+\begin{document}
+
+\title{Karate Club: Um Arcabouço Python de Código Aberto Orientado a API para Aprendizado Não Supervisionado em Grafos}
+
+\author{Benedek Rozemberczki}
+\affiliation{%
+  \institution{Universidade de Edimburgo}
+  \city{Edimburgo}
+  \country{Reino Unido}
+}
+\email{benedek.rozemberczki@ed.ac.uk}
+
+\author{Oliver Kiss}
+\affiliation{%
+  \institution{Universidade Central Europeia}
+  \city{Budapeste}
+  \country{Hungria}
+}
+\email{kiss_oliver@phd.ceu.edu}
+
+\author{Rik Sarkar}
+\affiliation{%
+  \institution{Universidade de Edimburgo}
+  \city{Edimburgo}
+  \country{Reino Unido}
+}
+\email{rsarkar@inf.ed.ac.uk}
+
+\begin{abstract}
+Os grafos codificam propriedades estruturais importantes de sistemas complexos. O aprendizado de máquina em grafos surgiu, portanto, como uma técnica importante em pesquisa e aplicações. Apresentamos o Karate Club -- um arcabouço (framework) em Python que combina mais de 30 algoritmos de mineração de grafos no estado da arte. Essas técnicas não supervisionadas facilitam a identificação e representação de características comuns de grafos. O objetivo primário do pacote é tornar a detecção de comunidades, a incorporação (embedding) de nós e de grafos inteiros disponíveis para um público amplo de pesquisadores e profissionais de aprendizado de máquina. O Karate Club é projetado com ênfase em uma interface de aplicação consistente, escalabilidade, facilidade de uso, comportamento padrão robusto dos modelos, ingestão padronizada de conjuntos de dados e geração de saídas. Este artigo discute os princípios de design por trás do arcabouço com exemplos práticos. Demonstramos a eficiência do Karate Club no desempenho de aprendizado em uma ampla gama de problemas reais de agrupamento (clustering) e tarefas de classificação, juntamente com evidências de suporte sobre sua velocidade competitiva.
+\end{abstract}
+
+\keywords{incorporação de redes, incorporação de grafos, aprendizado de representação, análise de redes, mineração de grafos}
+
+\maketitle
+
+\section{Introdução}
+
+Técnicas que extraem características (features) de dados em grafos de maneira não supervisionada \cite{DeepWalk, Graph2Vec, DANMF} têm alcançado um sucesso crescente na comunidade de aprendizado de máquina. As características extraídas automaticamente por esses métodos podem servir como entradas para predição de links, classificação de nós e de grafos, detecção de comunidades e várias outras tarefas \cite{DeepWalk, Walklets, MUSAE, graph_classification_baseline} em uma ampla gama de cenários de pesquisa e aplicação do mundo real. Ferramentas de mineração de grafos como \cite{NetworkX, SNAP, GraphTool} contribuíram para a melhoria e desenvolvimento de pipelines de aprendizado de máquina. A necessidade de engenharia de características personalizada e complexa é reduzida por técnicas não supervisionadas de mineração de grafos. Essa abordagem produz características que são naturalmente reutilizáveis em múltiplos tipos de tarefas. Pesquisas recentes \cite{DeepWalk, Walklets, NetLSD} tornaram essa extração de características altamente eficiente e paralelizável.
+
+A democratização do aprendizado de máquina para dados tabulares foi liderada por frameworks que viabilizaram o desenvolvimento rápido. Ferramentas como \cite{TensorFlow, ScikitLearn, PyTorch} estão disponíveis em linguagens de script de propósito geral com interfaces consistentes e fáceis de usar. Por outro lado, os frameworks de aprendizado baseados em grafos atuais são menos maduros e de escopo limitado \cite{NetworkX, GraphTool}. Por exemplo, esses pacotes hospedam certos algoritmos de detecção de comunidades, mas nenhum para incorporação (embedding) de nós ou de grafos inteiros. Além disso, algumas dessas ferramentas \cite{SNAP, GraphTool} impõem barreiras significativas para os usuários finais em termos de instalação de pré-requisitos e estruturas de dados personalizadas usadas para representar grafos.
+
+\textbf{Trabalho presente.} Propomos o Karate Club, um framework Python de código aberto para aprendizado não supervisionado em grafos. Implementamos o Karate Club com princípios de design consistentes e orientados a API em mente, o que torna a biblioteca amigável ao usuário final e modular. O nome do pacote é inspirado no Zachary’s Karate Club \cite{Zachary1977} -- uma rede comumente usada para demonstrar algoritmos de redes. O design desta caixa de ferramentas de aprendizado de máquina foi motivado pelos princípios usados para criar o amplamente utilizado pacote scikit-learn \cite{ScikitLearn}.
+
+O design envolve uma série de padrões fundamentais de engenharia. Cada algoritmo possui uma configuração padrão de hiperparâmetros sensível que ajuda profissionais não especialistas. Para facilitar ainda mais o uso do nosso pacote, os algoritmos têm um número limitado de métodos públicos compartilhados (por exemplo, \texttt{fit}). Os modelos ingerem estruturas de dados do ecossistema científico do Python \cite{NetworkX, SciPy, NumPy} como entrada e a saída gerada também segue esses formatos. A mecânica interna do modelo é sempre implementada como métodos privados usando bibliotecas de back-end otimizadas \cite{PyGSP, GenSim, SciPy, NumPy} para computação. Esses princípios, combinados com a documentação extensiva, garantem que o Karate Club seja acessível a um público mais amplo do que os frameworks de mineração de grafos de código aberto atualmente disponíveis.
+
+Nossa avaliação empírica se concentra em três tarefas comuns de mineração de grafos: detecção de comunidades disjuntas (sem sobreposição), classificação de nós e de grafos. Comparamos o desempenho de aprendizado de algoritmos em nível de nó e de grafo implementados em nosso framework em várias redes sociais, da web e de colaboração do mundo real (coletadas do Deezer, Reddit, Facebook, Twitch, Wikipedia e GitHub). Em relação ao tempo de execução, os modelos no Karate Club mostram uma escalabilidade razoável, que demonstramos pelo uso de dados sintéticos.
+
+\textbf{Nossas contribuições.} Especificamente, nosso trabalho traz as seguintes contribuições principais:
+\begin{enumerate}
+    \item Lançamos o Karate Club, um framework Python de mineração de grafos que fornece uma ampla gama de procedimentos fáceis de usar para detecção de comunidades, incorporação de nós e de grafos inteiros.
+    \item Demonstramos com código as principais ideias do design do framework orientado a API: encapsulamento e inspeção de hiperparâmetros, métodos públicos disponíveis, ingestão de dados, geração de saídas e interface com algoritmos de aprendizado downstream e métodos de avaliação.
+    \item Avaliamos o desempenho de aprendizado do framework em problemas reais de detecção de comunidades, classificação de nós e classificação de grafos. Validamos a escalabilidade dos algoritmos implementados no framework.
+    \item Disponibilizamos em código aberto, junto com o framework, uma documentação detalhada e múltiplos conjuntos de dados de classificação de grafos de grande porte.
+\end{enumerate}
+
+O restante deste artigo está estruturado da seguinte forma. Na Seção 2, discutimos as técnicas de mineração de grafos cobertas. Apresentamos uma visão geral dos principais princípios por trás do Karate Club na Seção 3, onde incluímos exemplos detalhados para explicar essas ideias de design. O desempenho de aprendizado e a escalabilidade dos algoritmos no pacote são avaliados na Seção 4. Revisamos bibliotecas de mineração de dados relacionadas na Seção 5. O artigo conclui com a Seção 6, onde discutimos direções futuras.
+
+\section{Procedimentos de Mineração de Grafos no Karate Club}
+
+Nesta seção, discutimos brevemente os vários algoritmos de mineração de grafos que estão disponíveis no lançamento 1.0 do pacote Karate Club.
+
+\subsection{Detecção de Comunidades}
+
+As técnicas de detecção de comunidades agrupam os vértices do grafo em conjuntos de nós densamente conectados. Esse agrupamento pode ser o resultado final ou uma entrada para um algoritmo de aprendizado downstream (por exemplo, classificação de nós ou predição de links).
+
+O Karate Club atualmente contém vários métodos para detecção de comunidades com e sem sobreposição. A detecção de comunidades sem sobreposição é análoga ao agrupamento clássico (clustering) e assume que um nó só pode pertencer a um único grupo; ver, por exemplo, \cite{EdMot, SCD, LabelProp, GEMSEC}. Enquanto a detecção de comunidades com sobreposição é análoga ao agrupamento difuso (fuzzy clustering), pois os nós possuem afiliação com múltiplos clusters; ver, por exemplo, \cite{SymmNMF, NNSED, M-NMF, DANMF}.
+
+\subsection{Incorporação de Nós (Node Embedding)}
+
+As incorporações de nós mapeiam os vértices de um grafo em um espaço euclidiano no qual aqueles que são considerados semelhantes de acordo com uma certa noção estarão em estreita proximidade. A representação euclidiana facilita a aplicação de bibliotecas padrão de aprendizado de máquina para classificação de nós, predição de links, agrupamento, etc.
+
+\textbf{Incorporação que preserva a vizinhança} mantém a proximidade dos nós no grafo quando um embedding é criado. Esses métodos decompõem implicitamente \cite{DeepWalk, Walklets, Diff2Vec} ou explicitamente \cite{GraRep, BoostNE, NetMF, NMF-ADMM} uma matriz de proximidade para criar a incorporação do nó.
+
+\textbf{Incorporação estrutural} conserva os papéis estruturais dos nós no espaço de incorporação \cite{Role2Vec, GraphWave, RolX}. Nós com embeddings semelhantes têm uma distribuição semelhante de estatísticas descritivas (por exemplo, centralidade e coeficiente de agrupamento) em sua vizinhança.
+
+\textbf{Incorporação atribuída} retém a estrutura da vizinhança e a similaridade de características genéricas dos nós quando a incorporação é aprendida. Esse aprendizado envolve a fatoração conjunta das matrizes nó-nó e nó-característica com uma técnica de decomposição de matriz direta \cite{TADW, BANE} ou implícita \cite{MUSAE, SINE}.
+
+\textbf{Meta-incorporação} combina informações de embeddings atribuídos, estruturais e que preservam a vizinhança para criar embeddings com maior qualidade de representação \cite{FastNetworkEmbedding}.
+
+\subsection{Incorporação e Sumarização de Grafos Inteiros}
+
+As técnicas de incorporação e sumarização de grafos inteiros criam representações de tamanho fixo de grafos inteiros como pontos em um espaço euclidiano. Os grafos que estão próximos no espaço de incorporação compartilham padrões estruturais, como subárvores.
+
+\textbf{Assinaturas espectrais} (spectral fingerprints) extraem estatísticas dos autovetores e autovalores do Laplaciano do grafo \cite{graph_classification_baseline, NetLSD, FGSD}. Vetores das estatísticas descritivas são usados como a representação do grafo inteiro.
+
+\textbf{Técnicas de fatoração implícita} criam uma matriz grafo-característica estrutural \cite{GL2Vec, Graph2Vec} enumerando características textuais nos grafos. Esta matriz é decomposta para criar descritores de grafos inteiros e embeddings de características de forma conjunta.
+
+\section{Princípios de Design}
+
+Quando criamos o Karate Club, usamos um ponto de vista de design de sistemas de aprendizado de máquina orientado a API \cite{ScikitLearn} para tornar a ferramenta amigável ao usuário final. Este princípio de design orientado a API envolve algumas ideias simples. Nesta seção, discutimos essas ideias e suas vantagens aparentes com exemplos ilustrativos apropriados em grande detalhe.
+
+\subsection{Hiperparâmetros do Modelo Encapsulados e Inspeção}
+
+Uma instância não supervisionada do modelo do Karate Club é criada usando o construtor do objeto Python apropriado. Este construtor possui uma configuração padrão de hiperparâmetros que permite o uso imediato e sensível do modelo. Definimos esses hiperparâmetros padrão para fornecer um aprendizado e um tempo de execução razoáveis. Se necessário, esses hiperparâmetros podem ser modificados no momento da criação da instância do modelo com a parametrização apropriada do construtor. Os hiperparâmetros são armazenados como atributos públicos para permitir a inspeção das configurações do modelo.
+
+Demonstramos o encapsulamento de hiperparâmetros pelo trecho de código na Figura \ref{fig:code1}. Primeiro, queremos criar uma incorporação para um grafo Erdos-Renyi gerado pelo NetworkX com as configurações padrão. Quando o modelo é construído e ajustado, não alteramos os hiperparâmetros padrão e podemos imprimir o valor padrão do hiperparâmetro de dimensões. Segundo, decidimos definir um número diferente de dimensões, então criamos e ajustamos um novo modelo e imprimimos o novo valor do hiperparâmetro de dimensões.
+
+\begin{figure}[h]
+\begin{lstlisting}
+import networkx as nx
+from karateclub import DeepWalk
+
+graph = nx.gnm_random_graph(100, 1000)
+
+# Modelo padrão
+model = DeepWalk()
+model.fit(graph)
+print(model.dimensions) # Saída padrão: 128
+
+# Modelo customizado
+model = DeepWalk(dimensions=64)
+model.fit(graph)
+print(model.dimensions) # Saída: 64
+\end{lstlisting}
+\caption{Criação de um grafo sintético e uso do modelo DeepWalk com hiperparâmetros padrão e modificados.}
+\label{fig:code1}
+\end{figure}
+
+\subsection{Consistência da API e Não Proliferação de Classes}
+
+Cada modelo de aprendizado de máquina não supervisionado no Karate Club é implementado como uma classe separada que herda da classe \texttt{Estimator}. Os algoritmos implementados em nosso framework possuem um número limitado de métodos públicos. Todos os modelos são treinados pelo uso do método \texttt{fit}, que recebe as entradas (grafo, características dos nós) e aprende o modelo. Os embeddings de nós e de grafos são retornados pelo método público \texttt{get\_embedding}, e as afiliações de comunidades são recuperadas chamando \texttt{get\_memberships}.
+
+Evitamos a proliferação de classes com duas estratégias específicas. Primeiro, as entradas usadas por nosso framework e as saídas geradas não dependem de classes de dados personalizadas. Segundo, algoritmos que usam o mesmo pré-processamento de dados ou etapa algorítmica foram construídos sobre blocos compartilhados.
+
+Na Figura \ref{fig:code2}, criamos um grafo aleatório, um modelo DeepWalk com os hiperparâmetros padrão, ajustamos este modelo usando o método público \texttt{fit} e retornamos a incorporação chamando o método público \texttt{get\_embedding}.
+
+\begin{figure}[h]
+\begin{lstlisting}
+import networkx as nx
+from karateclub import DeepWalk
+
+graph = nx.gnm_random_graph(100, 1000)
+
+model = DeepWalk()
+model.fit(graph)
+embedding = model.get_embedding()
+\end{lstlisting}
+\caption{Criação de um grafo sintético, ajuste do modelo DeepWalk e retorno do embedding.}
+\label{fig:code2}
+\end{figure}
+
+O exemplo na Figura \ref{fig:code2} pode ser modificado para criar uma incorporação Walklets com esforço mínimo, alterando a importação do modelo e o construtor, como mostrado na Figura \ref{fig:code3}.
+
+\begin{figure}[h]
+\begin{lstlisting}
+import networkx as nx
+from karateclub import Walklets
+
+graph = nx.gnm_random_graph(100, 1000)
+
+model = Walklets()
+model.fit(graph)
+embedding = model.get_embedding()
+\end{lstlisting}
+\caption{Criação de um grafo sintético, ajuste do modelo Walklets e retorno do embedding.}
+\label{fig:code3}
+\end{figure}
+
+\subsection{Ingestão Padronizada de Conjuntos de Dados}
+
+Projetamos o Karate Club para usar a ingestão padronizada de conjuntos de dados quando um modelo é ajustado. Praticamente, isso significa que algoritmos que possuem o mesmo propósito usam os mesmos tipos de dados para o treinamento do modelo:
+\begin{itemize}
+    \item Técnicas de incorporação de nós estruturais e baseadas em vizinhança usam um único grafo NetworkX como entrada para o método \texttt{fit}.
+    \item Procedimentos de incorporação de nós atribuídos recebem um grafo NetworkX como entrada e as características são representadas como um array NumPy ou como uma matriz esparsa SciPy.
+    \item Métodos de incorporação no nível do grafo e assinaturas estatísticas de grafos recebem uma lista de grafos NetworkX como entrada.
+    \item Métodos de detecção de comunidades usam um grafo NetworkX como entrada.
+\end{itemize}
+
+\subsection{Mecânica do Modelo de Alto Desempenho}
+
+A mecânica subjacente dos algoritmos de mineração de grafos foi implementada usando bibliotecas Python amplamente disponíveis que não dependem do sistema operacional. As representações internas de grafos no Karate Club usam o NetworkX. Operações de álgebra linear densa são feitas com o NumPy e suas contrapartes esparsas usam o SciPy. Técnicas de fatoração de matriz implícita utilizam o pacote GenSim e os métodos que dependem de processamento de sinais em grafos usam o PyGSP.
+
+\subsection{Geração de Saída Padronizada e Integração Downstream}
+
+A geração de saída padronizada do Karate Club garante que os algoritmos de aprendizado não supervisionado que servem ao mesmo propósito sempre retornem o mesmo tipo de saída com uma ordenação consistente dos pontos de dados:
+\begin{itemize}
+    \item Algoritmos de incorporação de nós sempre retornam um array float do NumPy quando o método \texttt{get\_embedding} é chamado.
+    \item Métodos de incorporação de grafos inteiros retornam um array float do NumPy quando o método \texttt{get\_embedding} é chamado.
+    \item Procedimentos de detecção de comunidades retornam um dicionário quando o método \texttt{get\_memberships} é chamado.
+\end{itemize}
+
+Demonstramos a geração de saída padronizada e a integração pelo trecho de código na Figura \ref{fig:code4}. Criamos agrupamentos de um grafo aleatório e retornamos dicionários contendo as afiliações de cluster. Usando a biblioteca externa \texttt{community}, podemos calcular a modularidade desses agrupamentos.
+
+\begin{figure}[h]
+\begin{lstlisting}
+import community
+import networkx as nx
+from karateclub import LabelPropagation, SCD
+
+graph = nx.gnm_random_graph(100, 1000)
+
+model = SCD()
+model.fit(graph)
+scd_memberships = model.get_memberships()
+
+model = LabelPropagation()
+model.fit(graph)
+lp_memberships = model.get_memberships()
+
+print(community.modularity(scd_memberships, graph))
+print(community.modularity(lp_memberships, graph))
+\end{lstlisting}
+\caption{Agrupamento com duas técnicas de detecção de comunidades e uso de uma biblioteca externa para avaliar a modularidade.}
+\label{fig:code4}
+\end{figure}
+
+\subsection{Limitações}
+
+O design atual do Karate Club apresenta certas limitações e assume premissas fortes sobre a entrada. Assumimos que o grafo do NetworkX é não direcionado e consiste em um único componente fortemente conexo. Todos os algoritmos assumem que os nós são indexados com inteiros consecutivamente e o índice do nó inicial é 0. Além disso, assumimos que o grafo não é multipartido, os nós são homogêneos e as arestas não têm peso.
+
+\section{Avaliação Experimental}
+
+Na avaliação experimental do Karate Club, demonstraremos a qualidade dos embeddings e das comunidades extraídas em problemas reais e validaremos a escalabilidade linear na prática.
+
+\subsection{Desempenho de Aprendizado}
+
+A avaliação da qualidade da representação foca em três tarefas: detecção de comunidades com comunidades de referência (ground truth), classificação de nós e classificação de grafos inteiros.
+
+\subsubsection{Conjuntos de Dados}
+
+Para avaliar o desempenho dos algoritmos no nível do nó, usamos redes atribuídas que estão publicamente disponíveis no SNAP \cite{SNAP}. Esses conjuntos de dados são resumidos na Tabela \ref{tab:datasets_node}.
+
+\begin{table}[h]
+\centering
+\caption{Redes sociais usadas para algoritmos no nível do nó.}
+\label{tab:datasets_node}
+\begin{tabular}{lcccc}
+\toprule
+Métrica & Wikipedia & GitHub & Twitch & FB Page-Page \\
+\midrule
+Nós & 11.631 & 37.700 & 7.126 & 22.470 \\
+Densidade & 0,003 & 0,001 & 0,002 & 0,001 \\
+Transitividade & 0,026 & 0,013 & 0,042 & 0,232 \\
+Diâmetro & 11 & 7 & 10 & 15 \\
+Atributos & 13.183 & 4.005 & 2.545 & 4.714 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Os conjuntos de dados para nível de grafo estão descritos na Tabela \ref{tab:datasets_graph}.
+
+\begin{table}[h]
+\centering
+\caption{Estatísticas dos conjuntos de dados de grafos.}
+\label{tab:datasets_graph}
+\begin{tabular}{lcccc}
+\toprule
+Dataset & Grafos & Nós (Min/Max) & Densidade & Diâmetro \\
+\midrule
+Reddit & 203.088 & 11 / 97 & 0,02 / 0,38 & 2 / 27 \\
+Twitch & 127.094 & 14 / 52 & 0,03 / 0,96 & 1 / 2 \\
+GitHub & 12.725 & 10 / 957 & 0,00 / 0,56 & 2 / 18 \\
+Deezer & 9.629 & 11 / 363 & 0,01 / 0,90 & 2 / 2 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Detecção de Comunidades}
+
+Relatamos na Tabela \ref{tab:nmi_node} as médias de NMI com os erros padrão calculados a partir de 100 execuções experimentais.
+
+\begin{table}[h]
+\centering
+\caption{Valores médios de NMI com erros padrão (100 runs).}
+\label{tab:nmi_node}
+\small
+\begin{tabular}{lcccc}
+\toprule
+Algoritmo & Wikipedia & GitHub & Twitch & FB Page-Page \\
+\midrule
+DANMF & .051 $\pm$ .001 & .083 $\pm$ .001 & .007 $\pm$ .001 & .164 $\pm$ .001 \\
+M-NMF & .063 $\pm$ .001 & .084 $\pm$ .001 & .004 $\pm$ .001 & .068 $\pm$ .001 \\
+NNSED & .063 $\pm$ .001 & .034 $\pm$ .001 & .004 $\pm$ .001 & .072 $\pm$ .001 \\
+SymmNMF & .062 $\pm$ .001 & .074 $\pm$ .001 & .007 $\pm$ .001 & .206 $\pm$ .001 \\
+Ego-Splitting & .157 $\pm$ .001 & .202 $\pm$ .001 & .223 $\pm$ .001 & .346 $\pm$ .001 \\
+EdMot & .085 $\pm$ .001 & .180 $\pm$ .001 & .008 $\pm$ .001 & .272 $\pm$ .001 \\
+LabelProp & .119 $\pm$ .001 & .090 $\pm$ .002 & .003 $\pm$ .001 & .320 $\pm$ .004 \\
+SCD & .181 $\pm$ .001 & .189 $\pm$ .001 & .169 $\pm$ .001 & .386 $\pm$ .001 \\
+GEMSEC & .102 $\pm$ .001 & .127 $\pm$ .001 & .008 $\pm$ .002 & .244 $\pm$ .001 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Classificação de Grafos}
+
+Os resultados médios de AUC são apresentados na Tabela \ref{tab:auc_graph}.
+
+\begin{table}[h]
+\centering
+\caption{Valores médios de AUC com erros padrão em nível de grafo (100 rodadas).}
+\label{tab:auc_graph}
+\small
+\begin{tabular}{lcccc}
+\toprule
+Algoritmo & Reddit Threads & Twitch Egos & GitHub Star & Deezer Egos \\
+\midrule
+GL2Vec & .753 $\pm$ .002 & .664 $\pm$ .002 & .551 $\pm$ .001 & .504 $\pm$ .001 \\
+Graph2Vec & .804 $\pm$ .002 & .702 $\pm$ .003 & .585 $\pm$ .001 & .512 $\pm$ .001 \\
+SF & .814 $\pm$ .002 & .678 $\pm$ .003 & .558 $\pm$ .001 & .501 $\pm$ .001 \\
+NetLSD & .827 $\pm$ .001 & .631 $\pm$ .002 & .632 $\pm$ .001 & .522 $\pm$ .001 \\
+FGSD & .825 $\pm$ .002 & .705 $\pm$ .003 & .656 $\pm$ .001 & .526 $\pm$ .001 \\
+GeoScattering & .800 $\pm$ .001 & .697 $\pm$ .001 & .546 $\pm$ .003 & .522 $\pm$ .003 \\
+FEATHER & .830 $\pm$ .002 & .720 $\pm$ .003 & .748 $\pm$ .002 & .540 $\pm$ .001 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsubsection{Classificação de Nós}
+
+As médias de AUC com erros padrão são reportadas na Tabela \ref{tab:auc_node}.
+
+\begin{table}[h]
+\centering
+\caption{Valores médios de AUC com erros padrão em nível de nó (100 rodadas).}
+\label{tab:auc_node}
+\small
+\begin{tabular}{lcccc}
+\toprule
+Algoritmo & Wikipedia & GitHub & Twitch & FB Page-Page \\
+\midrule
+BoostNE & .685 $\pm$ .001 & .845 $\pm$ .001 & .576 $\pm$ .001 & .752 $\pm$ .001 \\
+NodeSketch & .722 $\pm$ .001 & .631 $\pm$ .001 & .520 $\pm$ .001 & .579 $\pm$ .001 \\
+Diff2Vec & .832 $\pm$ .001 & .858 $\pm$ .001 & .589 $\pm$ .001 & .873 $\pm$ .001 \\
+NetMF & .866 $\pm$ .001 & .867 $\pm$ .001 & .629 $\pm$ .002 & .946 $\pm$ .001 \\
+Walklets & .875 $\pm$ .001 & .899 $\pm$ .002 & .622 $\pm$ .001 & .973 $\pm$ .001 \\
+HOPE & .870 $\pm$ .001 & .844 $\pm$ .001 & .612 $\pm$ .001 & .909 $\pm$ .001 \\
+GraRep & .888 $\pm$ .002 & .876 $\pm$ .001 & .609 $\pm$ .001 & .952 $\pm$ .001 \\
+DeepWalk & .850 $\pm$ .001 & .872 $\pm$ .002 & .597 $\pm$ .002 & .877 $\pm$ .001 \\
+NMF-ADMM & .747 $\pm$ .001 & .784 $\pm$ .001 & .619 $\pm$ .001 & .937 $\pm$ .001 \\
+LAP & .784 $\pm$ .001 & .529 $\pm$ .001 & .511 $\pm$ .001 & .501 $\pm$ .001 \\
+GraphWave & .517 $\pm$ .001 & .620 $\pm$ .001 & .583 $\pm$ .001 & .613 $\pm$ .001 \\
+Role2Vec & .845 $\pm$ .001 & .862 $\pm$ .002 & .601 $\pm$ .002 & .903 $\pm$ .002 \\
+BANE & .866 $\pm$ .002 & .570 $\pm$ .001 & .551 $\pm$ .001 & .970 $\pm$ .002 \\
+TENE & .907 $\pm$ .001 & .874 $\pm$ .001 & .615 $\pm$ .001 & .886 $\pm$ .001 \\
+TADW & .896 $\pm$ .001 & .817 $\pm$ .001 & .612 $\pm$ .002 & .871 $\pm$ .001 \\
+FSCNMF & .912 $\pm$ .001 & .856 $\pm$ .002 & .621 $\pm$ .001 & .891 $\pm$ .001 \\
+SINE & .904 $\pm$ .001 & .910 $\pm$ .002 & .646 $\pm$ .001 & .979 $\pm$ .001 \\
+MUSAE & .931 $\pm$ .001 & .903 $\pm$ .001 & .628 $\pm$ .001 & .981 $\pm$ .001 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Escalabilidade}
+
+Realizamos testes de escalabilidade variando o número de nós, densidade e número de grafos. Sob a ausência de conexão preferencial, todos os métodos incluídos escalam linearmente com o tamanho da entrada, demonstrando a eficiência prática do framework.
+
+\section{Trabalhos Relacionados}
+
+Nesta seção, comparamos o Karate Club com bibliotecas de mineração de grafos e aprendizado de máquina.
+
+\subsection{Frameworks Orientados a API}
+
+A API do Karate Club baseia-se fortemente nas ideias do \texttt{scikit-learn} \cite{ScikitLearn}, oferecendo configurações padrão sensíveis de hiperparâmetros, encapsulamento através do construtor e suporte a tipos de dados científicos padrão como NumPy e SciPy.
+
+\subsection{Bibliotecas de Mineração de Grafos}
+
+Ao contrário de bibliotecas como SNAP e GraphTool que requerem pré-requisitos e compilações complexas em C++, o Karate Club possui apenas dependências leves em Python, sendo construído inteiramente sobre o ecossistema do NetworkX. Além disso, as bibliotecas clássicas focam apenas em estatísticas estruturais clássicas ou detecção de comunidades, enquanto o Karate Club cobre de forma abrangente a incorporação de nós e de grafos inteiros.
+
+\section{Conclusão e Direções Futuras}
+
+Neste trabalho, descrevemos o Karate Club, um framework Python que realiza aprendizado não supervisionado em grafos, suportando detecção de comunidades e incorporação de nós e de grafos inteiros. No futuro, planejamos estender o framework para operar em grafos direcionados, ponderados, multiplex e temporais, além de explorar a incorporação hiperbólica de nós.
+
+\begin{acks}
+Benedek Rozemberczki foi apoiado pelo Centre for Doctoral Training in Data Science, financiado pelo EPSRC (bolsa EP/L016427/1).
+\end{acks}
+
+\begin{thebibliography}{99}
+
+\bibitem{TensorFlow} M. Abadi et al. 2016. Tensorflow: A system for large-scale machine learning. In OSDI '16.
+\bibitem{Role2Vec} N. K. Ahmed et al. 2019. role2vec: Role-based network embeddings. In Proc. DLG KDD.
+\bibitem{FSCNMF} S. Bandyopadhyay et al. 2018. Fscnmf: Fusing structure and content via non-negative matrix factorization. arXiv:1804.05313.
+\bibitem{LAP} M. Belkin e P. Niyogi. 2002. Laplacian eigenmaps and spectral techniques. In NIPS.
+\bibitem{ScikitLearn} L. Buitinck et al. 2013. API design for machine learning software: experiences from the scikit-learn project. arXiv:1309.0238.
+\bibitem{GraRep} S. Cao, W. Lu, e Q. Xu. 2015. Grarep: Learning graph representations with global structural information. In CIKM.
+\bibitem{GL2Vec} H. Chen e H. Koga. 2019. GL2vec: Graph Embedding Enriched by Line Graphs. In ICONIP.
+\bibitem{graph_classification_baseline} N. de Lara e P. Edouard. 2018. A simple baseline algorithm for graph classification. In NeurIPS.
+\bibitem{PyGSP} M. Defferrard et al. PyGSP: Graph Signal Processing in Python. zenodo.1003157.
+\bibitem{GraphWave} C. Donnat et al. 2018. Learning structural node embeddings via diffusion wavelets. In KDD.
+\bibitem{Ego-Splitting} A. Epasto, S. Lattanzi, e R. P. Leme. 2017. Ego-Splitting Framework. In KDD.
+\bibitem{GeoScattering} F. Gao, G. Wolf, e M. Hirn. 2019. Geometric Scattering for Graph Data Analysis. In ICML.
+\bibitem{NetworkX} A. Hagberg, P. Swart, e D. S Chult. 2008. Exploring network structure, dynamics, and function using NetworkX. Tech Report.
+\bibitem{RolX} K. Henderson et al. 2012. Rolx: structural role extraction \& mining in large graphs. In KDD.
+\bibitem{BoostNE} J. Li, L. Wu, e H. Liu. 2019. Multi-Level Network Embedding. In ASONAM.
+\bibitem{SymmNMF} D. Kuang, C. Ding, e H. Park. 2012. Symmetric nonnegative matrix factorization. In SDM.
+\bibitem{SNAP} J. Leskovec e A. Krevl. 2014. SNAP Datasets: Stanford Large Network Dataset Collection. http://snap.stanford.edu/data.
+\bibitem{EdMot} P.-Z. Li et al. 2019. EdMot: An Edge Enhancement Approach. In KDD.
+\bibitem{Graph2Vec} A. Narayanan et al. 2017. graph2vec: Learning distributed representations of graphs.
+\bibitem{HOPE} M. Ou et al. 2016. Asymmetric transitivity preserving graph embedding. In KDD.
+\bibitem{PyTorch} A. Paszke et al. 2019. PyTorch: An imperative style, high-performance deep learning library. In NeurIPS.
+\bibitem{GraphTool} T. P. Peixoto. 2014. The graph-tool python library. figshare.
+\bibitem{DeepWalk} B. Perozzi, R. Al-Rfou, e S. Skiena. 2014. Deepwalk: Online learning of social representations. In KDD.
+\bibitem{Walklets} B. Perozzi et al. 2017. Don't Walk, Skip!: online learning of multi-scale network embeddings. In ASONAM.
+\bibitem{SCD} A. Prat-Pérez, D. Dominguez-Sal, e J.-L. Larriba-Pey. 2014. High quality, scalable and parallel community detection. In WWW.
+\bibitem{NetMF} J. Qiu et al. 2018. Network embedding as matrix factorization. In WSDM.
+\bibitem{LabelProp} U. N. Raghavan, R. Albert, e S. Kumara. 2007. Near Linear Time Algorithm to Detect Community Structures. Phys. Rev. E.
+\bibitem{GenSim} R. Rehurek e P. Sojka. 2011. Gensim---statistical semantics in python. genism.org.
+\bibitem{MUSAE} B. Rozemberczki, C. Allen, e R. Sarkar. 2019. Multi-scale Attributed Node Embedding. arXiv:1909.13021.
+\bibitem{GEMSEC} B. Rozemberczki et al. 2019. GEMSEC: Graph Embedding with Self Clustering. In ASONAM.
+\bibitem{Diff2Vec} B. Rozemberczki e R. Sarkar. 2018. Fast Sequence-Based Embedding. In Complex Networks.
+\bibitem{FEATHER} B. Rozemberczki e R. Sarkar. 2020. Characteristic Functions on Graphs: Birds of a Feather. In CIKM.
+\bibitem{NNSED} B.-J. Sun et al. 2017. A non-negative symmetric encoder-decoder approach. In CIKM.
+\bibitem{NMF-ADMM} D. L. Sun e C. Fevotte. 2014. Alternating direction method of multipliers for NMF. In ICASSP.
+\bibitem{NetLSD} A. Tsitsulin et al. 2018. Netlsd: hearing the shape of a graph. In KDD.
+\bibitem{FGSD} S. Verma e Z.-L. Zhang. 2017. Hunt for the unique, stable, sparse and fast feature learning on graphs. In NeurIPS.
+\bibitem{SciPy} P. Virtanen et al. 2019. SciPy 1.0--fundamental algorithms for scientific computing in Python. arXiv:1907.10121.
+\bibitem{NumPy} S. van der Walt, S. C. Colbert, e G. Varoquaux. 2011. The NumPy array. CSE.
+\bibitem{M-NMF} X. Wang et al. 2017. Community Preserving Network Embedding. In AAAI.
+\bibitem{TADW} C. Yang et al. 2015. Network representation learning with rich text information. In IJCAI.
+\bibitem{FastNetworkEmbedding} C. Yang et al. 2017. Fast network embedding enhancement. In IJCAI.
+\bibitem{NodeSketch} D. Yang et al. 2019. NodeSketch: Highly-Efficient Graph Embeddings. In KDD.
+\bibitem{BANE} H. Yang et al. 2018. Binarized attributed network embedding. In ICDM.
+\bibitem{DANMF} F. Ye, C. Chen, e Z. Zheng. 2018. Deep Autoencoder-like Nonnegative Matrix Factorization. In CIKM.
+\bibitem{Zachary1977} W. W. Zachary. 1977. An information flow model for conflict and fission in small groups. JAR.
+\bibitem{SINE} D. Zhang et al. 2018. SINE: Scalable Incomplete Network Embedding. In ICDM.
+
+\end{thebibliography}
+
+\end{document}
