@@ -4,7 +4,7 @@ Algoritmo clássico de busca de caminhos mínimos de única origem para grafos c
 
 ---
 
-## 📈 Execução no Grafo do Artigo (SIGMOD 2026)
+## 📈 Execução no Grafo Zachary's Karate Club
 
 Rodando o Dijkstra a partir do nó inicial `1`:
 

@@ -4,7 +4,7 @@ Algoritmo clássico de busca e exploração em grafos. Explora o grafo percorren
 
 ---
 
-## 📈 Execução no Grafo do Artigo (SIGMOD 2026)
+## 📈 Execução no Grafo Zachary's Karate Club
 
 Rodando a DFS a partir do vértice inicial `1`:
 

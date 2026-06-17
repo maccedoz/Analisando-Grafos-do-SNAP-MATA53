@@ -4,7 +4,7 @@ Algoritmo clássico de busca e exploração em grafos. Visita primeiro todos os 
 
 ---
 
-## 📈 Execução no Grafo do Artigo (SIGMOD 2026)
+## 📈 Execução no Grafo Zachary's Karate Club
 
 Rodando a BFS a partir do vértice inicial `1`:
 

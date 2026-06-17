@@ -8,7 +8,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd "$DIR"
 
 echo "===================================================="
-echo "🚀 Configurando ambiente do Simulador CTLD & CtLd-Cons"
+echo "🚀 Configurando ambiente do Simulador Zachary's Karate Club"
 echo "===================================================="
 
 # Verificar se a venv existe, se não, criar

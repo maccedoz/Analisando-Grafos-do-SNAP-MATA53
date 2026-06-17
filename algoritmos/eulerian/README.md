@@ -4,7 +4,7 @@ Este algoritmo determina se um grafo não direcionado conexo possui um **Circuit
 
 ---
 
-## 📈 Execução no Grafo do Artigo (SIGMOD 2026)
+## 📈 Execução no Grafo Zachary's Karate Club
 
 *   **Entrada:** Grafo de 7 vértices.
 *   **Graus dos Vértices:**

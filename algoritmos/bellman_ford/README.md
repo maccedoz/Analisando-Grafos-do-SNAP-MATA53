@@ -4,7 +4,7 @@ Calcula os caminhos mínimos a partir de um vértice de origem único. Diferente
 
 ---
 
-## 📈 Execução no Grafo do Artigo (SIGMOD 2026)
+## 📈 Execução no Grafo Zachary's Karate Club
 
 Rodando o Bellman-Ford a partir do nó inicial `1`:
 

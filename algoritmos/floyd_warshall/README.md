@@ -4,7 +4,7 @@ Resolve o problema de caminhos mínimos entre todos os pares de vértices de for
 
 ---
 
-## 📈 Execução no Grafo do Artigo (SIGMOD 2026)
+## 📈 Execução no Grafo Zachary's Karate Club
 
 *   **Entrada:** Grafo de 7 vértices e pesos associados.
 *   **Saída Parcial (Distâncias a partir do vértice 1):**

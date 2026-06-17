@@ -4,7 +4,7 @@ O algoritmo de Kruskal constrói a Árvore Geradora Mínima (MST) de um grafo n�
 
 ---
 
-## 📈 Execução no Grafo do Artigo (SIGMOD 2026)
+## 📈 Execução no Grafo Zachary's Karate Club
 
 *   **Entrada:** Grafo de 7 vértices e pesos associados.
 *   **Arestas Selecionadas para a MST:**

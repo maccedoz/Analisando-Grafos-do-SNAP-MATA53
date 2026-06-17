@@ -4,7 +4,7 @@ O algoritmo de Tarjan identifica os Componentes Fortemente Conexos (SCCs) de um 
 
 ---
 
-## 📈 Execução no Grafo do Artigo (SIGMOD 2026)
+## 📈 Execução no Grafo Zachary's Karate Club
 
 Embora o grafo do artigo seja bidirecional (tratado como não direcionado), as arestas são inseridas nas duas direções. Isso resulta em um único componente fortemente conexo que engloba toda a rede:
 
