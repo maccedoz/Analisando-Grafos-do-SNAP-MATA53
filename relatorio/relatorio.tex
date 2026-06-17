@@ -1,6 +1,7 @@
 \documentclass[sigconf]{webmedia}
 
 \usepackage{lmodern}
+\usepackage{xurl}
 \graphicspath{{../graficos/}{../}}
 
 %webmedia.cls is adapted from acmart.cls for use in Proceedings of the Brazilian Symposium on Multimedia and the Web (WebMedia)
@@ -43,7 +44,7 @@
 %% The abstract is a short summary of the work to be presented in the
 %% article.
 \begin{abstract}
-  Este relatório apresenta uma análise estrutural e algorítmica detalhada da rede social \textit{Zachary's Karate Club} no contexto do framework Python \textit{Karate Club}. O documento está organizado em três partes principais. Na Parte I, realizei a caracterização estrutural obrigatória do grafo, computando e discutindo métricas de topologia fundamentais como densidade, diâmetro, comprimento médio dos caminhos, agrupamento local e distribuição de graus. Na Parte II, detalhei a implementação manual de oito algoritmos clássicos de grafos (BFS, DFS, Eulerianidade, Dijkstra, Bellman-Ford, Floyd-Warshall, Tarjan SCC e Kruskal MST), analisando suas complexidades teóricas e empíricas sob 50 rodadas de medições estatísticas. Na Parte III, conduzi uma análise estrutural avançada abordando a propriedade de pequeno mundo (\textit{small-world}), a lei de potência, a robustez estrutural sob falhas e ataques direcionados, a comparação com os modelos de Erdős-Rényi, Watts-Strogatz e Barabási-Albert, e correlacionei os resultados com a cisão histórica real do clube.
+  Este relatório apresenta uma análise estrutural e algorítmica detalhada da rede social  {Zachary's Karate Club} no contexto do framework Python  {Karate Club}. O documento está organizado em três partes principais. Na Parte I, realizei a caracterização estrutural obrigatória do grafo, computando e discutindo métricas de topologia fundamentais como densidade, diâmetro, comprimento médio dos caminhos, agrupamento local e distribuição de graus. Na Parte II, detalhei a implementação manual de oito algoritmos clássicos de grafos (BFS, DFS, Eulerianidade, Dijkstra, Bellman-Ford, Floyd-Warshall, Tarjan SCC e Kruskal MST), analisando suas complexidades teóricas e empíricas sob 50 rodadas de medições estatísticas. Na Parte III, conduzi uma análise estrutural avançada abordando a propriedade de pequeno mundo ( {small-world}), a lei de potência, a robustez estrutural sob falhas e ataques direcionados, a comparação com os modelos de Erdős-Rényi, Watts-Strogatz e Barabási-Albert, e correlacionei os resultados com a cisão histórica real do clube.
 \end{abstract}
 
 %%
@@ -58,9 +59,9 @@
 
 \section{Introdução}
 
-A modelagem de sistemas complexos por meio de grafos permite caracterizar de forma quantitativa as relações entre entidades em redes sociais, biológicas e de transporte. O artigo \textit{"Karate Club: An API Oriented Open-source Python Framework for Unsupervised Learning on Graphs"} \cite{Rozemberczki2020} apresenta um arcabouço focado em algoritmos de aprendizado não supervisionado sobre grafos, tais como detecção de comunidades e incorporação de nós. 
+A modelagem de sistemas complexos por meio de grafos permite caracterizar de forma quantitativa as relações entre entidades em redes sociais, biológicas e de transporte. O artigo  {"Karate Club: An API Oriented Open-source Python Framework for Unsupervised Learning on Graphs"} \cite{Rozemberczki2020} apresenta um arcabouço focado em algoritmos de aprendizado não supervisionado sobre grafos, tais como detecção de comunidades e incorporação de nós. 
 
-O nome da biblioteca é diretamente inspirado na rede \textit{Zachary's Karate Club} \cite{Zachary1977}, um grafo que mapeia as amizades entre 34 membros de um clube universitário durante a década de 1970. Devido a uma disputa entre o instrutor ("Mr. Hi") e o administrador ("John A."), o clube dividiu-se em duas facções. Esta rede tornou-se o principal \textit{benchmark} para validar algoritmos de agrupamento em grafos.
+O nome da biblioteca é diretamente inspirado na rede  {Zachary's Karate Club} \cite{Zachary1977}, um grafo que mapeia as amizades entre 34 membros de um clube universitário durante a década de 1970. Devido a uma disputa entre o instrutor ("Mr. Hi") e o administrador ("John A."), o clube dividiu-se em duas facções. Esta rede tornou-se o principal  {benchmark} para validar algoritmos de agrupamento em grafos.
 
 Este relatório divide-se nas três partes requeridas para a avaliação: a caracterização estrutural básica (Parte I), o benchmark experimental dos algoritmos da disciplina (Parte II) e a modelagem estrutural avançada (Parte III).
 
@@ -69,7 +70,7 @@ Este relatório divide-se nas três partes requeridas para a avaliação: a cara
 
 \section{Metodologia e Tratamento de Dados}
 
-O grafo original do clube de caratê de Zachary foi obtido diretamente da biblioteca NetworkX (\texttt{nx.karate\_club\_graph()}), onde a rede é modelada como um grafo não-ponderado, não-direcionado e simples, composto por 34 nós (rotulados de 0 a 33) e 78 arestas.
+O grafo original do clube de caratê de Zachary foi obtido diretamente da biblioteca NetworkX (\path{nx.karate_club_graph()}), onde a rede é modelada como um grafo não-ponderado, não-direcionado e simples, composto por 34 nós (rotulados de 0 a 33) e 78 arestas.
 
 \subsection{Tabela de Tratamentos Realizados}
 
@@ -82,19 +83,19 @@ A Tabela \ref{tab:tratamentos} detalha cada etapa de tratamento considerada, seu
     \toprule
     Tratamento Considerado & Status & Justificativa \\
     \midrule
-    Grafo temporal $\rightarrow$ estático & Não Aplicável & O Zachary's Karate Club é uma rede estática — trata-se de um único \textit{snapshot} das relações sociais coletadas entre 1970--1972. Não há dimensão temporal nos dados. \\
-    Grafo dirigido $\rightarrow$ não-direcionado & Não Aplicável & O grafo já é originalmente não-direcionado. As amizades no clube são relações simétricas (mútuas), confirmado por \texttt{G.is\_directed() = False}. \\
-    Multigrafo $\rightarrow$ grafo simples & Não Aplicável & O grafo já é simples por construção. Não existem arestas paralelas entre nenhum par de nós, confirmado por \texttt{G.is\_multigraph() = False}. \\
-    Remoção de auto-loops & Não Aplicável & Não há auto-loops (arestas de um nó para si mesmo) no dataset. Verificado: \texttt{nx.number\_of\_selfloops(G) = 0}. \\
+    Grafo temporal $\rightarrow$ estático & Não Aplicável & O Zachary's Karate Club é uma rede estática — trata-se de um único  {snapshot} das relações sociais coletadas entre 1970--1972. Não há dimensão temporal nos dados. \\
+    Grafo dirigido $\rightarrow$ não-direcionado & Não Aplicável & O grafo já é originalmente não-direcionado. As amizades no clube são relações simétricas (mútuas), confirmado por \path{G.is_directed() = False}. \\
+    Multigrafo $\rightarrow$ grafo simples & Não Aplicável & O grafo já é simples por construção. Não existem arestas paralelas entre nenhum par de nós, confirmado por \path{G.is_multigraph() = False}. \\
+    Remoção de auto-loops & Não Aplicável & Não há auto-loops (arestas de um nó para si mesmo) no dataset. Verificado: \path{nx.number_of_selfloops(G) = 0}. \\
     Extração da maior componente conexa & Não Aplicável & O grafo original é totalmente conexo — possui exatamente 1 componente conexo de tamanho 34, abrangendo todos os nós. Nenhuma extração foi necessária. \\
     Filtragem por intervalo temporal & Não Aplicável & Não há marcações temporais nas arestas ou nós. O dataset representa um período fixo de observação (1970--1972) sem granularidade temporal. \\
     Geração de pesos nas arestas & \textbf{Realizado} & Como a rede original é não-ponderada, atribuí pesos sintéticos determinísticos via $w(u,v) = (u{+}v)\bmod 5 + 1$, gerando valores inteiros em $[1, 5]$. Isso viabiliza os algoritmos de caminho mínimo (Dijkstra, Bellman-Ford, Floyd-Warshall) e a MST (Kruskal). \\
-    Mapeamento de atributos sociais & \textbf{Realizado} & Extraí o atributo \texttt{club} de cada nó do NetworkX, mapeando a facção final de cada membro (\textit{"Mr. Hi"} ou \textit{"Officer"}) para uso em visualizações e análise da cisão social. \\
-    Conversão para lista de adjacência & \textbf{Realizado} & Exportei a representação em lista de adjacência para \texttt{data/karate\_adj\_list.txt}, onde cada linha registra um nó e seus vizinhos. Este formato é usado como entrada direta dos algoritmos implementados do zero. \\
-    Exportação para formato estruturado (CSV) & \textbf{Realizado} & Exportei a rede tratada para \texttt{data/karate\_club\_edges.csv} com as colunas \texttt{source}, \texttt{target}, \texttt{weight}, \texttt{source\_club} e \texttt{target\_club}, servindo como base de dados persistida do projeto. \\
+    Mapeamento de atributos sociais & \textbf{Realizado} & Extraí o atributo \path{club} de cada nó do NetworkX, mapeando a facção final de cada membro ( {"Mr. Hi"} ou  {"Officer"}) para uso em visualizações e análise da cisão social. \\
+    Conversão para lista de adjacência & \textbf{Realizado} & Exportei a representação em lista de adjacência para \path{data/karate_adj_list.txt}, onde cada linha registra um nó e seus vizinhos. Este formato é usado como entrada direta dos algoritmos implementados do zero. \\
+    Exportação para formato estruturado (CSV) & \textbf{Realizado} & Exportei a rede tratada para \path{data/karate_club_edges.csv} com as colunas \path{source}, \path{target}, \path{weight}, \path{source_club} e \path{target_club}, servindo como base de dados persistida do projeto. \\
     \bottomrule
   \end{tabular}
-\end{table*}
+\end{table...}
 
 \subsection{Detalhamento dos Tratamentos Realizados}
 
@@ -107,11 +108,11 @@ Dentre os tratamentos listados, quatro foram efetivamente executados sobre o dat
     \end{equation}
     Esta fórmula gera valores inteiros no intervalo $[1, 5]$. A definição de pesos positivos é indispensável para testar algoritmos de menor caminho (Dijkstra, Bellman-Ford, Floyd-Warshall) e árvore geradora mínima (Kruskal) de forma significativa.
 
-    \item \textbf{Mapeamento de Atributos Sociais:} Extraí e registrei o atributo \texttt{club} de cada nó, indicando a facção final de cada membro após a cisão histórica do clube.
+    \item \textbf{Mapeamento de Atributos Sociais:} Extraí e registrei o atributo \path{club} de cada nó, indicando a facção final de cada membro após a cisão histórica do clube.
 
-    \item \textbf{Conversão para Lista de Adjacência:} Exportei o grafo no formato de lista de adjacência para o arquivo \texttt{data/karate\_adj\_list.txt}. Cada linha do arquivo segue o formato \texttt{nó: [vizinho1, vizinho2, ...]}, representando explicitamente a estrutura de vizinhança de cada vértice. Este formato é utilizado diretamente pelos algoritmos implementados do zero (BFS, DFS, Dijkstra, etc.).
+    \item \textbf{Conversão para Lista de Adjacência:} Exportei o grafo no formato de lista de adjacência para o arquivo \path{data/karate_adj_list.txt}. Cada linha do arquivo segue o formato \path{nó: [vizinho1, vizinho2, ...]}, representando explicitamente a estrutura de vizinhança de cada vértice. Este formato é utilizado diretamente pelos algoritmos implementados do zero (BFS, DFS, Dijkstra, etc.).
 
-    \item \textbf{Exportação para CSV Estruturado:} Exportei a rede tratada para \texttt{data/karate\_club\_edges.csv}, com as colunas \texttt{source}, \texttt{target}, \texttt{weight}, \texttt{source\_club} e \texttt{target\_club}. Este arquivo serve como base de dados persistida e reproduzível do projeto.
+    \item \textbf{Exportação para CSV Estruturado:} Exportei a rede tratada para \path{data/karate_club_edges.csv}, com as colunas \path{source}, \path{target}, \path{weight}, \path{source_club} e \path{target_club}. Este arquivo serve como base de dados persistida e reproduzível do projeto.
 \end{enumerate}
 
 \section{Parte I - Análise Estrutural Obrigatória}
@@ -222,7 +223,7 @@ A distribuição é altamente assimétrica, típica de redes reais sob dinâmica
 \section{Parte II - Algoritmos da Disciplina}
 \label{sec:parte_ii}
 
-Nesta seção, descrevo a implementação manual de algoritmos clássicos de grafos em um arquivo separado (\texttt{algoritmos.py}) e a sua aplicação prática no grafo de Zachary.
+Nesta seção, descrevo a implementação manual de algoritmos clássicos de grafos no diretório \path{algoritmos/} e a sua aplicação prática no grafo de Zachary.
 
 \subsection{BFS (Busca em Largura)}
 A busca em largura explora sistematicamente as arestas do grafo para encontrar todos os vértices acessíveis a partir de uma origem, computando as menores distâncias em termos de número de saltos. A complexidade teórica é $O(V + E)$ em listas de adjacência.
@@ -282,7 +283,7 @@ Identifica as componentes fortemente conexas (SCCs) em grafos direcionados. Ele 
 \end{verbatim}
 
 \subsection{Algoritmo de Kruskal (MST)}
-Constrói a Árvore Geradora Mínima (MST) de um grafo não direcionado conectado. O algoritmo ordena todas as arestas por peso e utiliza uma estrutura de dados de conjuntos disjuntos (\textit{DSU}) com compressão de caminhos para evitar ciclos. A complexidade teórica é $O(E \log V)$ devido à ordenação das arestas.
+Constrói a Árvore Geradora Mínima (MST) de um grafo não direcionado conectado. O algoritmo ordena todas as arestas por peso e utiliza uma estrutura de dados de conjuntos disjuntos ( {DSU}) com compressão de caminhos para evitar ciclos. A complexidade teórica é $O(E \log V)$ devido à ordenação das arestas.
 \begin{verbatim}
 >>> from algoritmos import kruskal_mst
 >>> edges, weight = kruskal_mst(graph, weights)
@@ -340,7 +341,7 @@ Nesta seção, realizei uma caracterização profunda da topologia do grafo do c
 \subsection{Propriedade Small-World}
 \label{subsec:small_world}
 
-Uma rede é caracterizada como de pequeno mundo (\textit{small-world}) se o seu comprimento médio dos caminhos mais curtos ($L$) é comparável ao de um grafo aleatório equivalente de mesmo tamanho e densidade ($L \approx L_{rand}$), mas o seu coeficiente de clusterização médio ($C$) é significativamente maior do que o de sua contraparte aleatória ($C \gg C_{rand}$).
+Uma rede é caracterizada como de pequeno mundo ( {small-world}) se o seu comprimento médio dos caminhos mais curtos ($L$) é comparável ao de um grafo aleatório equivalente de mesmo tamanho e densidade ($L \approx L_{rand}$), mas o seu coeficiente de clusterização médio ($C$) é significativamente maior do que o de sua contraparte aleatória ($C \gg C_{rand}$).
 
 Para avaliar essa propriedade quantitativamente, implementei um script que calcula esses parâmetros do zero (sem bibliotecas de grafos prontas para as métricas), gera 100 grafos aleatórios equivalentes baseados no modelo de Erdős-Rényi que preserva a conexidade, e computa o índice de pequeno mundo de Humphries e Gurney ($\sigma_{sw}$):
 \begin{equation}
@@ -416,7 +417,7 @@ def clustering_coefficient(graph):
 \subsection{Lei de Potência}
 \label{subsec:power_law}
 
-Uma rede complexa é dita livre de escala (\textit{scale-free}) se a sua distribuição de graus de probabilidade segue uma lei de potência:
+Uma rede complexa é dita livre de escala ( {scale-free}) se a sua distribuição de graus de probabilidade segue uma lei de potência:
 \begin{equation}
     P(k) \propto k^{-\gamma}
 \end{equation}
@@ -424,7 +425,7 @@ onde $P(k)$ é a probabilidade de um vértice possuir grau $k$ e $\gamma$ é o e
 
 Para avaliar se o grafo de Zachary sugere uma lei de potência, realizei uma regressão linear no espaço log-log ($\ln(P(k))$ versus $\ln(k)$) a partir da frequência empírica de graus obtida do zero. O expoente estimado foi $\gamma \approx 0,5512$.
 
-A distribuição empírica de graus **não** sugere uma lei de potência pura devido a severos efeitos de tamanho finito (\textit{finite-size effects}):
+A distribuição empírica de graus **não** sugere uma lei de potência pura devido a severos efeitos de tamanho finito ( {finite-size effects}):
 \begin{itemize}
     \item \textbf{Amostra Reduzida:} Com apenas $N=34$ vértices, a faixa de variação dos graus ($k \in [1, 17]$) é extremamente estreita. A lei de potência é uma propriedade estatística assintótica aplicável a redes de grande porte (milhares de nós).
     \item \textbf{Expoente Atípico:} O valor $\gamma \approx 0,55$ está muito abaixo do intervalo realista para redes livres de escala, o que aponta para a ausência de amostragem representativa.
@@ -531,7 +532,7 @@ Sob o ponto de vista da sociologia matemática, esse comportamento prediz de for
 
 \section{Conclusão}
 
-O presente relatório cumpriu com êxito os objetivos de caracterização estrutural e avaliação de algoritmos de Teoria dos Grafos sobre a clássica rede social \textit{Zachary's Karate Club}.
+O presente relatório cumpriu com êxito os objetivos de caracterização estrutural e avaliação de algoritmos de Teoria dos Grafos sobre a clássica rede social  {Zachary's Karate Club}.
 
 Na caracterização de topologia (Parte I), comprovei a estrutura de mundo pequeno da rede, dotada de alto agrupamento local e baixo diâmetro, polarizada sob os dois nós de grau elevado representados pelo instrutor e pelo administrador do clube.
 
@@ -540,16 +541,16 @@ Na vertente algorítmica (Parte II), implementei com sucesso os algoritmos de bu
 Por fim, a análise avançada (Parte III) desvelou que a rede é resiliente a falhas fortuitas, mas extremamente vulnerável a ataques cirúrgicos contra suas lideranças (hubs), um fato matemático que antecipou e espelhou de forma precisa o destino sociológico e a cisão histórica do clube de caratê original.
 
 \begin{acks}
-  Agradeço à Universidade Federal da Bahia (UFBA) pelo apoio acadêmico, e aos pesquisadores do framework \textit{Karate Club} pela disponibilização do artigo de base. Os códigos-fonte, scripts, conjunto de dados tratados e este relatório estão disponíveis publicamente no repositório: \url{https://github.com/maccedoz/Analisando-Grafos-do-SNAP-MATA53}.
+  Agradeço à Universidade Federal da Bahia (UFBA) pelo apoio acadêmico, e aos pesquisadores do framework  {Karate Club} pela disponibilização do artigo de base. Os códigos-fonte, scripts, conjunto de dados tratados e este relatório estão disponíveis publicamente no repositório: \url{https://github.com/maccedoz/Analisando-Grafos-do-SNAP-MATA53}.
 \end{acks}
 
 \begin{thebibliography}{99}
 
 \bibitem{Rozemberczki2020}
-Benedek Rozemberczki, Oliver Kiss, and Rik Sarkar. 2020. Karate Club: An API Oriented Open-Source Python Framework for Unsupervised Learning on Graphs. In \textit{Proceedings of the 29th ACM International Conference on Information and Knowledge Management (CIKM '20)}. ACM, 3125--3132. arXiv:2003.04819.
+Benedek Rozemberczki, Oliver Kiss, and Rik Sarkar. 2020. Karate Club: An API Oriented Open-Source Python Framework for Unsupervised Learning on Graphs. In  {Proceedings of the 29th ACM International Conference on Information and Knowledge Management (CIKM '20)}. ACM, 3125--3132. arXiv:2003.04819.
 
 \bibitem{Zachary1977}
-Wayne W. Zachary. 1977. An Information Flow Model for Conflict and Fission in Small Groups. \textit{Journal of Anthropological Research} 33, 4 (1977), 452--473.
+Wayne W. Zachary. 1977. An Information Flow Model for Conflict and Fission in Small Groups.  {Journal of Anthropological Research} 33, 4 (1977), 452--473.
 
 \end{thebibliography}
 
