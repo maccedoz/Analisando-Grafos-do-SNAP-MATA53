@@ -1,33 +1,26 @@
-# Algoritmo de Tarjan para Componentes Fortemente Conexos (SCC)
+# Algoritmo de Tarjan (SCC)
 
-O algoritmo de Tarjan identifica os Componentes Fortemente Conexos (SCCs) de um grafo direcionado usando uma única busca em profundidade (DFS) auxiliada por uma pilha e vetores de controle de índice/lowlink. A complexidade é linear, de $O(V + E)$.
+Identifica Componentes Fortemente Conexos (SCCs) em grafos direcionados usando uma única varredura DFS com pilha e índices de baixo-link. Complexidade: **O(V + E)**.
 
 ---
 
-## 📈 Execução no Grafo Zachary's Karate Club
+## ▶️ Como Executar
 
-Embora o grafo do artigo seja bidirecional (tratado como não direcionado), as arestas são inseridas nas duas direções. Isso resulta em um único componente fortemente conexo que engloba toda a rede:
-
-*   **Entrada:** Grafo de 7 vértices bidirecional.
-*   **Componentes Fortemente Conexos:**
-    *   `Componente 1: [7, 3, 5, 6, 4, 2, 1]`
-
-## 💻 Exemplo de Uso em Python
-
-```python
-from algoritmos import tarjan_scc
-
-graph = {
-    1: [2, 3],
-    2: [1, 4, 3],
-    3: [1, 5, 2],
-    4: [2, 6, 5],
-    5: [3, 4, 7],
-    6: [4],
-    7: [5]
-}
-
-sccs = tarjan_scc(graph)
-print(sccs)
-# [[7, 3, 5, 6, 4, 2, 1]]
+```bash
+python3 algoritmos/tarjan/tarjan.py
 ```
+
+## 📋 Saída Esperada (Zachary's Karate Club)
+
+```
+Tarjan SCC — Zachary's Karate Club
+=============================================
+Componentes Fortemente Conexos encontrados: 1
+  SCC 1: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
+          14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
+          26, 27, 28, 29, 30, 31, 32, 33]  (tamanho: 34)
+
+Resultado: 1 componente(s) — a rede é totalmente conexa.
+```
+
+**Interpretação:** Como o grafo é não-direcionado, as arestas foram tratadas como bidirecionais, resultando em um único SCC contendo todos os 34 membros. Isso confirma a conectividade total da rede — todos os membros estavam integrados *antes* da cisão.

@@ -25,8 +25,8 @@ O projeto está estruturado em pastas organizadas por finalidade:
     *   `gerar_graficos.py`: Gera os gráficos em alta definição para o relatório.
     *   `run_benchmarks.py`: Executa o benchmark de tempo de execução com 50 rodadas e Intervalo de Confiança a 95%.
     *   `analise_estrutural.py`: Roda a análise estrutural avançada (Small-world, Lei de Potência, Robustez).
-    *   `executar_algoritmos.py`: Script de teste rápido que executa os 8 algoritmos sobre o grafo Zachary's Karate Club e exibe os resultados no terminal.
-    *   `script.py`: Código-fonte do simulador interativo em Streamlit.
+    *   `executar_algoritmos.py`: Script de teste rápido que executa os 8 algoritmos sobre o grafo do artigo de referência (SIGMOD 2026).
+    *   `script.py`: ~~removido~~ (era simulador de outro projeto, não relacionado ao Karate Club)
 *   **`data/`**: Pasta para o conjunto de dados estruturado:
     *   `karate_club_edges.csv`: Lista de adjacência tratada contendo arestas, pesos normalizados e facções dos nós.
 *   **`graficos/`**: Pasta de saída para as visualizações geradas:
@@ -71,7 +71,7 @@ Todos os comandos devem ser rodados a partir do diretório raiz do projeto:
     ```bash
     python3 scripts/executar_algoritmos.py
     ```
-6.  **Iniciar o Simulador Streamlit Interativo**:
+6.  **Configurar o Ambiente Rapidamente**:
     ```bash
     ./dev.sh
     ```

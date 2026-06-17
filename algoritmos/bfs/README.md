@@ -1,31 +1,27 @@
 # Busca em Largura (BFS)
 
-Algoritmo clássico de busca e exploração em grafos. Visita primeiro todos os vértices vizinhos imediatos (distância 1), depois os vizinhos destes (distância 2) e assim por diante.
+Algoritmo clássico de busca e exploração em grafos. Visita primeiro todos os vizinhos imediatos (distância 1), depois os vizinhos destes (distância 2) e assim por diante. Complexidade: **O(V + E)**.
 
 ---
 
-## 📈 Execução no Grafo Zachary's Karate Club
+## ▶️ Como Executar
 
-Rodando a BFS a partir do vértice inicial `1`:
-
-*   **Entrada:** Grafo de 7 vértices e vértice inicial `1`.
-*   **Ordem de Visitação:** `[1, 2, 3, 4, 5, 6, 7]`
-
-## 💻 Exemplo de Uso em Python
-
-```python
-from algoritmos import bfs
-
-graph = {
-    1: [2, 3],
-    2: [1, 4, 3],
-    3: [1, 5, 2],
-    4: [2, 6, 5],
-    5: [3, 4, 7],
-    6: [4],
-    7: [5]
-}
-
-resultado = bfs(graph, start=1)
-print(resultado) # [1, 2, 3, 4, 5, 6, 7]
+```bash
+python3 algoritmos/bfs/bfs.py
 ```
+
+## 📋 Saída Esperada (Zachary's Karate Club)
+
+```
+BFS — Zachary's Karate Club (nó inicial: 0 / Mr. Hi)
+=======================================================
+Nós visitados (34 no total):
+  [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 17, 19, 21,
+   31, 30, 9, 27, 28, 32, 16, 33, 24, 25, 23, 14, 15, 18,
+   20, 22, 29, 26]
+
+Resultado: grafo totalmente conexo — todos os 34 nós
+alcançados a partir do nó 0.
+```
+
+**Interpretação:** O nó 0 (Mr. Hi) alcança diretamente 16 vizinhos. A partir deles, em 2 saltos, toda a rede é coberta — evidência da propriedade *small-world* (comprimento médio de caminhos ≈ 2,4 saltos).

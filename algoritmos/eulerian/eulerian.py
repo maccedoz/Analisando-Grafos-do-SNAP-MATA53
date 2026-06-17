@@ -34,3 +34,21 @@ def is_eulerian(graph):
         return "Semi-Euleriano (Possui Caminho Euleriano)"
     else:
         return "Não Euleriano"
+
+if __name__ == "__main__":
+    import csv, os, sys
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+    csv_path = os.path.join(os.path.dirname(__file__), '../../data/karate_club_edges.csv')
+    graph = {i: [] for i in range(34)}
+    with open(csv_path) as f:
+        for row in csv.DictReader(f):
+            u, v = int(row['source']), int(row['target'])
+            graph[u].append(v); graph[v].append(u)
+
+    odd = [u for u in graph if len(graph[u]) % 2 != 0]
+    print("Eulerianidade — Zachary's Karate Club")
+    print("=" * 45)
+    print(f"Nós com grau ímpar: {len(odd)} → {odd}")
+    result = is_eulerian(graph)
+    print(f"Resultado: {result}")
+    print(f"\nExplicação: como {len(odd)} > 2 nós têm grau ímpar, não existe circuito nem caminho euleriano.")

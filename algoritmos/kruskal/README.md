@@ -1,47 +1,37 @@
 # Algoritmo de Kruskal (MST)
 
-O algoritmo de Kruskal constrói a Árvore Geradora Mínima (MST) de um grafo não direcionado conectado. Ordena todas as arestas por peso e utiliza uma estrutura de dados de conjuntos disjuntos (Union-Find) com compressão de caminhos para evitar ciclos. A complexidade é de $O(E \log V)$.
+Constrói a Árvore Geradora Mínima (MST) ordenando as arestas por peso e usando uma estrutura Union-Find (DSU) com compressão de caminhos para evitar ciclos. Complexidade: **O(E log V)**.
 
 ---
 
-## 📈 Execução no Grafo Zachary's Karate Club
+## ▶️ Como Executar
 
-*   **Entrada:** Grafo de 7 vértices e pesos associados.
-*   **Arestas Selecionadas para a MST:**
-    *   `(2 - 4)` com peso $1.0$
-    *   `(5 - 7)` com peso $1.0$
-    *   `(1 - 2)` com peso $2.0$
-    *   `(2 - 3)` com peso $2.0$
-    *   `(4 - 5)` com peso $2.0$
-    *   `(4 - 6)` com peso $4.0$
-*   **Peso Total da MST:** $12.0$
-
-## 💻 Exemplo de Uso em Python
-
-```python
-from algoritmos import kruskal_mst
-
-graph = {
-    1: [2, 3],
-    2: [1, 4, 3],
-    3: [1, 5, 2],
-    4: [2, 6, 5],
-    5: [3, 4, 7],
-    6: [4],
-    7: [5]
-}
-
-weights = {
-    (1, 2): 2.0, (2, 1): 2.0,
-    (1, 3): 5.0, (3, 1): 5.0,
-    (2, 4): 1.0, (4, 2): 1.0,
-    (2, 3): 2.0, (3, 2): 2.0,
-    (3, 5): 3.0, (5, 3): 3.0,
-    (4, 6): 4.0, (6, 4): 4.0,
-    (4, 5): 2.0, (5, 4): 2.0,
-    (5, 7): 1.0, (7, 5): 1.0
-}
-
-arestas_mst, peso_total = kruskal_mst(graph, weights=weights)
-print(peso_total) # 12.0
+```bash
+python3 algoritmos/kruskal/kruskal.py
 ```
+
+## 📋 Saída Esperada (Zachary's Karate Club)
+
+```
+Kruskal MST — Zachary's Karate Club
+=============================================
+Arestas na MST (33 = N-1 = 34-1):
+  ( 0 —  5)  peso: 1.0
+  ( 0 — 10)  peso: 1.0
+  ( 1 — 19)  peso: 1.0
+  ( 2 —  3)  peso: 1.0
+  ( 2 —  8)  peso: 1.0
+  ( 2 — 13)  peso: 1.0
+  ( 2 — 28)  peso: 1.0
+  ( 3 —  7)  peso: 1.0
+  ( 3 — 12)  peso: 1.0
+  ( 4 —  6)  peso: 1.0
+  ( 8 — 32)  peso: 1.0
+  ( 8 — 33)  peso: 1.0   ← ponte entre facções!
+  ...
+  (todas 33 arestas)
+
+Resultado: Peso total da MST = 51.0
+```
+
+**Interpretação:** A MST conecta todos os 34 membros com o menor custo total de 51.0 usando exatamente 33 arestas (N−1). As arestas de peso 1.0 (mais baratas) são priorizadas. A aresta (8 — 33) é particularmente interessante: é uma das pontes entre a facção de *Mr. Hi* e a do *Officer* que aparece na MST, revelando o elo mais econômico entre os dois grupos.

@@ -1,31 +1,27 @@
 # Busca em Profundidade (DFS)
 
-Algoritmo clássico de busca e exploração em grafos. Explora o grafo percorrendo caminhos de forma recursiva até atingir vértices sem vizinhos não visitados, retrocedendo em seguida.
+Algoritmo de exploração que percorre o grafo o mais fundo possível antes de retroceder. Base para ordenação topológica e detecção de ciclos. Complexidade: **O(V + E)**.
 
 ---
 
-## 📈 Execução no Grafo Zachary's Karate Club
+## ▶️ Como Executar
 
-Rodando a DFS a partir do vértice inicial `1`:
-
-*   **Entrada:** Grafo de 7 vértices e vértice inicial `1`.
-*   **Ordem de Visitação:** `[1, 2, 4, 6, 5, 3, 7]`
-
-## 💻 Exemplo de Uso em Python
-
-```python
-from algoritmos import dfs
-
-graph = {
-    1: [2, 3],
-    2: [1, 4, 3],
-    3: [1, 5, 2],
-    4: [2, 6, 5],
-    5: [3, 4, 7],
-    6: [4],
-    7: [5]
-}
-
-resultado = dfs(graph, start=1)
-print(resultado) # [1, 2, 4, 6, 5, 3, 7]
+```bash
+python3 algoritmos/dfs/dfs.py
 ```
+
+## 📋 Saída Esperada (Zachary's Karate Club)
+
+```
+DFS — Zachary's Karate Club (nó inicial: 0 / Mr. Hi)
+=======================================================
+Nós visitados (34 no total):
+  [0, 1, 2, 3, 7, 12, 13, 33, 8, 30, 32, 14, 15, 18, 20,
+   22, 23, 25, 24, 27, 31, 28, 29, 26, 9, 19, 17, 21, 4,
+   6, 5, 10, 16, 11]
+
+Resultado: grafo totalmente conexo — todos os 34 nós
+alcançados em profundidade a partir do nó 0.
+```
+
+**Interpretação:** A DFS mergulha pela facção de *Mr. Hi* antes de cruzar para a facção do *Officer* (nó 33 visitado no 8º passo), revelando a separação natural das duas comunidades.

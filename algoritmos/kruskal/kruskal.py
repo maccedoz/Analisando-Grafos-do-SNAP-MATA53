@@ -49,3 +49,23 @@ def kruskal_mst(graph, weights):
                 break
                 
     return mst_edges, total_weight
+
+if __name__ == "__main__":
+    import csv, os, sys
+    sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+    csv_path = os.path.join(os.path.dirname(__file__), '../../data/karate_club_edges.csv')
+    graph = {i: [] for i in range(34)}
+    weights = {}
+    with open(csv_path) as f:
+        for row in csv.DictReader(f):
+            u, v, w = int(row['source']), int(row['target']), float(row['weight'])
+            graph[u].append(v); graph[v].append(u)
+            weights[(u,v)] = w; weights[(v,u)] = w
+
+    print("Kruskal MST — Zachary's Karate Club")
+    print("=" * 45)
+    mst_edges, total_weight = kruskal_mst(graph, weights=weights)
+    print(f"Arestas na MST ({len(mst_edges)} = N-1 = 34-1):")
+    for u, v, w in mst_edges:
+        print(f"  ({u:>2} — {v:>2})  peso: {w:.1f}")
+    print(f"\nResultado: Peso total da MST = {total_weight:.1f}")

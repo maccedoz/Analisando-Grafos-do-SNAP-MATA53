@@ -1,37 +1,25 @@
 # Verificação de Eulerianidade
 
-Este algoritmo determina se um grafo não direcionado conexo possui um **Circuito Euleriano** (todos os nós com grau par), um **Caminho Euleriano** (exatamente 2 nós com grau ímpar, também conhecido como Semi-Euleriano), ou se **Não é Euleriano**.
+Determina se o grafo possui circuito ou caminho euleriano. Para grafos não-direcionados conexos: todos os vértices com grau par → circuito euleriano; exatamente 2 com grau ímpar → caminho euleriano. Complexidade: **O(V + E)**.
 
 ---
 
-## 📈 Execução no Grafo Zachary's Karate Club
+## ▶️ Como Executar
 
-*   **Entrada:** Grafo de 7 vértices.
-*   **Graus dos Vértices:**
-    *   Vértice 1: Grau 2 (par)
-    *   Vértice 2: Grau 3 (ímpar)
-    *   Vértice 3: Grau 3 (ímpar)
-    *   Vértice 4: Grau 3 (ímpar)
-    *   Vértice 5: Grau 3 (ímpar)
-    *   Vértice 6: Grau 1 (ímpar)
-    *   Vértice 7: Grau 1 (ímpar)
-*   **Resultado:** `"Não Euleriano"` (possui 6 vértices com grau ímpar, violando as condições necessárias).
-
-## 💻 Exemplo de Uso em Python
-
-```python
-from algoritmos import is_eulerian
-
-graph = {
-    1: [2, 3],
-    2: [1, 4, 3],
-    3: [1, 5, 2],
-    4: [2, 6, 5],
-    5: [3, 4, 7],
-    6: [4],
-    7: [5]
-}
-
-resultado = is_eulerian(graph)
-print(resultado) # "Não Euleriano"
+```bash
+python3 algoritmos/eulerian/eulerian.py
 ```
+
+## 📋 Saída Esperada (Zachary's Karate Club)
+
+```
+Eulerianidade — Zachary's Karate Club
+=============================================
+Nós com grau ímpar: 12 → [1, 4, 8, 10, 11, 13, 19, 23, 24, 25, 28, 33]
+Resultado: Não Euleriano
+
+Explicação: como 12 > 2 nós têm grau ímpar, não existe
+circuito nem caminho euleriano.
+```
+
+**Interpretação:** 12 dos 34 membros do clube possuem número ímpar de amizades. Isso é esperado em redes sociais reais — a eulerianidade exigiria uma estrutura muito artificial e simétrica, incompatível com relações humanas orgânicas.
