@@ -99,7 +99,7 @@ A Tabela \ref{tab:tratamentos} detalha cada etapa de tratamento considerada, seu
 
 \subsection{Detalhamento dos Tratamentos Realizados}
 
-Dentre os tratamentos listados, quatro foram efetivamente executados sobre o dataset:
+Dentre os tratamentos listados, quatro foram efetivamente executados sobre o dataset por meio do script \path{scripts/gerar_dataset.py}:
 
 \begin{enumerate}
     \item \textbf{Geração de Pesos nas Arestas:} Como a rede original é não-ponderada, simulei a força do relacionamento atribuindo pesos determinísticos não-negativos a cada aresta $(u, v)$ através da expressão:
@@ -157,7 +157,7 @@ A Tabela \ref{tab:metrics} consolida os resultados obtidos. Todos os parâmetros
   \label{fig:karate_graph}
 \end{figure}
 
-A topologia visualizada na Figura \ref{fig:karate_graph} evidencia a divisão social clássica que deu origem à cisão do grupo de caratê.
+A topologia visualizada na Figura \ref{fig:karate_graph} (gerada através do script \path{scripts/gerar_graficos.py}) evidencia a divisão social clássica que deu origem à cisão do grupo de caratê.
 
 \begin{table*}[t]
   \caption{Métricas Estruturais Computadas para o Grafo Zachary's Karate Club}
@@ -211,7 +211,7 @@ A distribuição de graus está detalhada na Tabela \ref{tab:degree_freq} e ilus
   \end{tabular}
 \end{table}
 
-A distribuição é altamente assimétrica, típica de redes reais sob dinâmicas de conexão preferencial. A maioria dos nós ($67,6\%$) possui grau baixo (2 ou 3). Destacam-se dois super-hubs: o Instrutor (Nó 0, grau 16) e o Administrador (Nó 33, grau 17). O conflito interpessoal entre esses dois nós causou a polarização e posterior divisão dos nós de menor grau.
+A distribuição, cujo comportamento empírico é ilustrado na Figura \ref{fig:degree_dist} (plotada utilizando o script \path{scripts/gerar_graficos.py}), é altamente assimétrica, típica de redes reais sob dinâmicas de conexão preferencial. A maioria dos nós ($67,6\%$) possui grau baixo (2 ou 3). Destacam-se dois super-hubs: o Instrutor (Nó 0, grau 16) e o Administrador (Nó 33, grau 17). O conflito interpessoal entre esses dois nós causou a polarização e posterior divisão dos nós de menor grau.
 
 \begin{figure}[h]
   \centering
@@ -223,7 +223,7 @@ A distribuição é altamente assimétrica, típica de redes reais sob dinâmica
 \section{Parte II - Algoritmos da Disciplina}
 \label{sec:parte_ii}
 
-Nesta seção, descrevo a implementação manual de algoritmos clássicos de grafos no diretório \path{algoritmos/} e a sua aplicação prática no grafo de Zachary.
+Nesta seção, descrevo a implementação manual de algoritmos clássicos de grafos no diretório \path{algoritmos/} e a sua aplicação prática no grafo de Zachary. Para verificar preliminarmente o funcionamento correto de cada implementação, utilizei o script de demonstração \path{scripts/executar_algoritmos.py}.
 
 \subsection{BFS (Busca em Largura)}
 A busca em largura explora sistematicamente as arestas do grafo para encontrar todos os vértices acessíveis a partir de uma origem, computando as menores distâncias em termos de número de saltos. A complexidade teórica é $O(V + E)$ em listas de adjacência.
@@ -294,7 +294,7 @@ Como o grafo possui 34 vértices, a árvore geradora mínima resultante contém 
 
 \subsection{Análise Experimental de Desempenho}
 
-Para analisar o tempo real de execução dos algoritmos implementados, realizei um benchmark de $n = 50$ rodadas. Em cada rodada, o algoritmo executa um número elevado de iterações internas. A média de tempo por iteração foi registrada para cada uma das 50 rodadas.
+Para analisar o tempo real de execução dos algoritmos implementados, executei o script \path{scripts/run_benchmarks.py} para realizar um benchmark de $n = 50$ rodadas. Em cada rodada, o algoritmo executa um número elevado de iterações internas. A média de tempo por iteração foi registrada para cada uma das 50 rodadas.
 
 Como o número de amostras $n \ge 30$, apliquei a aproximação pela **Distribuição Normal (Z)** para calcular o Intervalo de Confiança ($IC$) com coeficiente de confiança de $95\%$ ($z_{\alpha/2} = 1,96$):
 \begin{equation}
@@ -343,7 +343,7 @@ Nesta seção, realizei uma caracterização profunda da topologia do grafo do c
 
 Uma rede é caracterizada como de pequeno mundo ( {small-world}) se o seu comprimento médio dos caminhos mais curtos ($L$) é comparável ao de um grafo aleatório equivalente de mesmo tamanho e densidade ($L \approx L_{rand}$), mas o seu coeficiente de clusterização médio ($C$) é significativamente maior do que o de sua contraparte aleatória ($C \gg C_{rand}$).
 
-Para avaliar essa propriedade quantitativamente, implementei um script que calcula esses parâmetros do zero (sem bibliotecas de grafos prontas para as métricas), gera 100 grafos aleatórios equivalentes baseados no modelo de Erdős-Rényi que preserva a conexidade, e computa o índice de pequeno mundo de Humphries e Gurney ($\sigma_{sw}$):
+Para avaliar essa propriedade quantitativamente, utilizei o script \path{scripts/analise_estrutural.py} que calcula esses parâmetros do zero (sem bibliotecas de grafos prontas para as métricas), gera 100 grafos aleatórios equivalentes baseados no modelo de Erdős-Rényi que preserva a conexidade, e computa o índice de pequeno mundo de Humphries e Gurney ($\sigma_{sw}$):
 \begin{equation}
     \sigma_{sw} = \frac{\frac{C_{obs}}{C_{rand}}}{\frac{L_{obs}}{L_{rand}}}
 \end{equation}
@@ -454,7 +454,7 @@ Para avaliar a tolerância a falhas e ataques na rede de Zachary, simulei dois c
     \item \textbf{Remoção Direcionada (Ataque):} Exclusão intencional dos 2 nós de maior grau (Nó 33, grau 17 e Nó 0, grau 16).
 \end{enumerate}
 
-A Tabela \ref{tab:robustness} descreve os impactos dessas remoções.
+A Tabela \ref{tab:robustness} descreve os impactos dessas remoções obtidos através das simulações computadas pelo script \path{scripts/analise_estrutural.py}.
 
 \begin{table}[h]
   \caption{Métricas de Robustez e Conectividade}
