@@ -59,9 +59,9 @@
 
 \section{Introdução}
 
-A modelagem de sistemas complexos por meio de grafos permite caracterizar de forma quantitativa as relações entre entidades em redes sociais, biológicas e de transporte. O artigo  {"Karate Club: An API Oriented Open-source Python Framework for Unsupervised Learning on Graphs"} \cite{Rozemberczki2020} apresenta um arcabouço focado em algoritmos de aprendizado não supervisionado sobre grafos, tais como detecção de comunidades e incorporação de nós. 
+A modelagem de sistemas complexos por meio de grafos permite caracterizar de forma quantitativa as relações entre entidades em redes sociais, biológicas e de transporte. O artigo \cite{Rozemberczki2020} apresenta um arcabouço focado em algoritmos de aprendizado não supervisionado sobre grafos, tais como detecção de comunidades e incorporação de nós. 
 
-O nome da biblioteca é diretamente inspirado na rede  {Zachary's Karate Club} \cite{Zachary1977}, um grafo que mapeia as amizades entre 34 membros de um clube universitário durante a década de 1970. Devido a uma disputa entre o instrutor ("Mr. Hi") e o administrador ("John A."), o clube dividiu-se em duas facções. Esta rede tornou-se o principal  {benchmark} para validar algoritmos de agrupamento em grafos.
+O nome da biblioteca é diretamente inspirado na rede  {Zachary's Karate Club} \cite{Zachary1977}, um grafo que mapeia as amizades entre 34 membros de um clube universitário durante a década de 1970. Devido a uma disputa entre o instrutor ("Mr. Hi") e o administrador ("John A."), o clube dividiu-se em duas "facções". Esta rede tornou-se o principal  {benchmark} para validar algoritmos de agrupamento em grafos.
 
 Este relatório divide-se nas três partes requeridas para a avaliação: a caracterização estrutural básica (Parte I), o benchmark experimental dos algoritmos da disciplina (Parte II) e a modelagem estrutural avançada (Parte III).
 
@@ -83,11 +83,11 @@ A Tabela \ref{tab:tratamentos} detalha cada etapa de tratamento considerada, seu
     \toprule
     Tratamento Considerado & Status & Justificativa \\
     \midrule
-    Grafo temporal $\rightarrow$ estático & Não Aplicável & O Zachary's Karate Club é uma rede estática — trata-se de um único  {snapshot} das relações sociais coletadas entre 1970--1972. Não há dimensão temporal nos dados. \\
+    Grafo temporal $\rightarrow$ estático & Não Aplicável & O Zachary's Karate Club é uma rede estática, trata-se de um único  {snapshot} das relações sociais coletadas entre 1970--1972. Não há dimensão temporal nos dados. \\
     Grafo dirigido $\rightarrow$ não-direcionado & Não Aplicável & O grafo já é originalmente não-direcionado. As amizades no clube são relações simétricas (mútuas), confirmado por \path{G.is_directed() = False}. \\
     Multigrafo $\rightarrow$ grafo simples & Não Aplicável & O grafo já é simples por construção. Não existem arestas paralelas entre nenhum par de nós, confirmado por \path{G.is_multigraph() = False}. \\
     Remoção de auto-loops & Não Aplicável & Não há auto-loops (arestas de um nó para si mesmo) no dataset. Verificado: \path{nx.number_of_selfloops(G) = 0}. \\
-    Extração da maior componente conexa & Não Aplicável & O grafo original é totalmente conexo — possui exatamente 1 componente conexo de tamanho 34, abrangendo todos os nós. Nenhuma extração foi necessária. \\
+    Extração da maior componente conexa & Não Aplicável & O grafo original é totalmente conexo, possuindo exatamente 1 componente conexo de tamanho 34, abrangendo todos os nós. Nenhuma extração foi necessária. \\
     Filtragem por intervalo temporal & Não Aplicável & Não há marcações temporais nas arestas ou nós. O dataset representa um período fixo de observação (1970--1972) sem granularidade temporal. \\
     Geração de pesos nas arestas & \textbf{Realizado} & Como a rede original é não-ponderada, atribuí pesos sintéticos determinísticos via $w(u,v) = (u{+}v)\bmod 5 + 1$, gerando valores inteiros em $[1, 5]$. Isso viabiliza os algoritmos de caminho mínimo (Dijkstra, Bellman-Ford, Floyd-Warshall) e a MST (Kruskal). \\
     Mapeamento de atributos sociais & \textbf{Realizado} & Extraí o atributo \path{club} de cada nó do NetworkX, mapeando a facção final de cada membro ( {"Mr. Hi"} ou  {"Officer"}) para uso em visualizações e análise da cisão social. \\
