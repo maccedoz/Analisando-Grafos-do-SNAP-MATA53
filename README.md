@@ -81,8 +81,8 @@ Todos os comandos devem ser rodados a partir do diretório raiz do projeto:
 ## 📊 Resumo dos Resultados Obtidos
 
 *   **Propriedades Básicas**: A rede é totalmente conexa (1 componente de tamanho 34), possui 78 arestas, densidade de 13,9%, diâmetro igual a 5, raio igual a 3, comprimento médio dos caminhos de 2,408 saltos e coeficiente de clusterização de 0,571.
-*   **Small-World**: Índice $\sigma_{sw} \approx 4,39 > 1$. O grafo apresenta comportamento acentuado de pequeno mundo (clusterização local alta com caminhos curtos).
-*   **Lei de Potência**: O expoente estimado é de $\gamma \approx 0,55$. O grafo não segue uma lei de potência pura devido ao seu tamanho reduzido ($N=34$), mas sua distribuição é assimétrica e governada por hubs.
+*   **Small-World**: Índice sigma_sw ≈ 4,39 > 1. O grafo apresenta comportamento acentuado de pequeno mundo (clusterização local alta com caminhos curtos).
+*   **Lei de Potência**: O expoente estimado é de gamma ≈ 0,55. O grafo não segue uma lei de potência pura devido ao seu tamanho reduzido (N=34), mas sua distribuição é assimétrica e governada por hubs.
 *   **Robustez**:
     *   *Falha Aleatória (5% dos nós)*: O grafo se mantém conexo com tamanho médio do LCC de 31,55 (de 32) e caminhos de 2,41 saltos.
     *   *Ataque Direcionado (5% mais centrais)*: A remoção dos hubs 0 e 33 fratura a rede em 3 componentes isolados.
