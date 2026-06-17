@@ -17,30 +17,28 @@ os.makedirs(graficos_dir, exist_ok=True)
 G = nx.karate_club_graph()
 
 # 1. Gráfico da Estrutura do Grafo
-plt.figure(figsize=(8, 6), dpi=300)
-plt.style.use('dark_background')
+plt.figure(figsize=(7, 6), dpi=300)
+plt.style.use('default')
 
 # Determinar cores com base nas facções (Mr. Hi e John A.)
 colors = []
 for n, data in G.nodes(data=True):
     if data['club'] == 'Mr. Hi':
-        colors.append('#3B82F6') # Azul
+        colors.append('#2563EB') # Azul Royal elegante
     else:
-        colors.append('#EF4444') # Vermelho
+        colors.append('#DC2626') # Vermelho elegante
 
 # Posicionamento usando layout de mola (spring layout)
-pos = nx.spring_layout(G, seed=42)
+pos = nx.spring_layout(G, k=0.35, iterations=50, seed=42)
 
 # Desenhar nós, arestas e rótulos
-nx.draw_networkx_nodes(G, pos, node_color=colors, node_size=600, edgecolors='white', linewidths=1.5)
-nx.draw_networkx_edges(G, pos, alpha=0.5, edge_color='#94A3B8', width=1.5)
-nx.draw_networkx_labels(G, pos, font_size=10, font_color='white', font_family='sans-serif', font_weight='bold')
+nx.draw_networkx_nodes(G, pos, node_color=colors, node_size=350, edgecolors='#1E293B', linewidths=1.0)
+nx.draw_networkx_edges(G, pos, alpha=0.3, edge_color='#475569', width=1.0)
+nx.draw_networkx_labels(G, pos, font_size=8, font_color='white', font_family='sans-serif', font_weight='bold')
 
-plt.title("Visualização do Grafo Zachary's Karate Club\n(Cores representam as facções Mr. Hi e Officer)", 
-          fontsize=14, fontweight='bold', color='white', pad=20)
 plt.axis('off')
 plt.tight_layout()
-plt.savefig(os.path.join(graficos_dir, 'karate_club_graph.png'), facecolor='#0F172A', edgecolor='none')
+plt.savefig(os.path.join(graficos_dir, 'karate_club_graph.png'), facecolor='white', edgecolor='none', bbox_inches='tight')
 plt.close()
 
 # 2. Gráfico da Distribuição de Graus
