@@ -356,9 +356,11 @@ Para avaliar a tolerância a falhas e ataques na rede de Zachary, foram simulado
 
 A Tabela \ref{tab:robustness} descreve os impactos dessas remoções obtidos através das simulações computadas pelo script \path{scripts/analise_estrutural.py}.
 
-\begin{table*}[h]
+\begin{table}[htbp]
   \caption{Métricas de Robustez e Conectividade}
   \label{tab:robustness}
+  \centering
+  \footnotesize
   \begin{tabular}{lccc}
     \toprule
     Cenário & Nós Removidos & Tam. LCC & Caminho Médio LCC \\
@@ -368,7 +370,7 @@ A Tabela \ref{tab:robustness} descreve os impactos dessas remoções obtidos atr
     Remoção Direcionada & [0, 33] (hubs) & 26 & 2,591 \\
     \bottomrule
   \end{tabular}
-\end{table*}
+\end{table}
 
 A rede mostra um comportamento típico de sistemas que dependem de nós principais (hubs). Ela tem uma grande \textbf{resistência a falhas aleatórias}: ao remover nós ao acaso, a rede quase não sofre impacto, mantendo a maior parte conectada com média de $31,55$ nós (dos $32$ possíveis) e com um aumento muito pequeno na distância média (de $2,408$ para $2,415$). Por outro lado, a rede é \textbf{muito frágil contra ataques direcionados}: remover os hubs 0 e 33 muda completamente a estrutura, quebrando a conexão da rede e dividindo o grafo em três partes isoladas (uma de tamanho 26, uma de tamanho 5 e um nó sozinho), e aumentando a distância média para $2,591$ na parte principal.
 
