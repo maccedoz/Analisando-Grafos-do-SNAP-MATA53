@@ -74,12 +74,15 @@ Este relatório divide-se nas três partes requeridas para a avaliação: a cara
 
 A escolha do grafo a ser analisado foi definida a partir do número de matrícula do estudante ($M = 224116504$), seguindo a regra de mapeamento da disciplina:
 \begin{equation}
-    f(M) = ((\text{soma dos dígitos de } M) \times (\text{últimos 2 dígitos de } M + 1)) \bmod 129
+    f(M) = (S(M) \times (U(M) + 1)) \bmod 129
 \end{equation}
-Para a matrícula $224116504$, a soma dos dígitos é $2+2+4+1+1+6+5+0+4 = 25$ e os dois últimos dígitos são $04$ (ou seja, $4$). O cálculo resulta em:
-\begin{equation}
-    f(224116504) = (25 \times (4 + 1)) \bmod 129 = 125 \bmod 129 = 125
-\end{equation}
+onde $S(M)$ é a soma dos dígitos de $M$ e $U(M)$ são os dois últimos dígitos de $M$. Para a matrícula em questão, os parâmetros e a função de mapeamento são computados como segue:
+\begin{align}
+    S(224116504) &= 2+2+4+1+1+6+5+0+4 = 25 \\
+    U(224116504) &= 04 = 4 \\
+    f(224116504) &= (25 \times (4 + 1)) \bmod 129 \nonumber \\
+    &= 125 \bmod 129 = 125
+\end{align}
 Como o resultado é $125$, o grafo selecionado na planilha da disciplina foi o \textbf{G125}, que corresponde à rede clássica do clube de caratê de Zachary (\textit{Zachary's Karate Club}). O grafo original foi obtido diretamente da biblioteca NetworkX (\path{nx.karate_club_graph()}), onde a rede é modelada como um grafo não-ponderado, não-direcionado e simples, composto por 34 nós (rotulados de 0 a 33) e 78 arestas.
 
 \subsection{Tabela de Tratamentos Realizados}
