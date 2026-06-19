@@ -1,6 +1,6 @@
-\documentclass[sigconf]{webmedia}
+\documentclass[sigconf,nonacm]{webmedia}
 
-\usepackage{lmodern}
+\usepackage{amsmath}
 \usepackage{xurl}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
@@ -46,7 +46,7 @@
 %% The abstract is a short summary of the work to be presented in the
 %% article.
 \begin{abstract}
-  Este relatório apresenta uma análise estrutural e algorítmica detalhada da rede social  {Zachary's Karate Club} no contexto do framework Python  {Karate Club}. O documento está organizado em três partes principais. Na Parte I, foi realizada a caracterização estrutural obrigatória do grafo, computando e discutindo métricas de topologia fundamentais como densidade, diâmetro, comprimento médio dos caminhos, agrupamento local e distribuição de graus. Na Parte II, foi detalhada a implementação manual de oito algoritmos clássicos de grafos (BFS, DFS, Eulerianidade, Dijkstra, Bellman-Ford, Floyd-Warshall, Tarjan SCC e Kruskal MST), analisando suas complexidades teóricas e empíricas sob 50 rodadas de medições estatísticas. Na Parte III, foi conduzida uma análise estrutural avançada abordando a propriedade de pequeno mundo ( {small-world}), a lei de potência, a robustez estrutural sob falhas e ataques direcionados, a comparação com os modelos de Erdős-Rényi, Watts-Strogatz e Barabási-Albert, e correlacionando os resultados com a cisão histórica real do clube.
+  Este relatório apresenta uma análise da rede social {Zachary's Karate Club} usando a biblioteca Python {Karate Club}. O documento está dividido em três partes. Na Parte I, foi feita a caracterização da estrutura do grafo, calculando e analisando métricas fundamentais como densidade, diâmetro, comprimento médio dos caminhos, agrupamento local e distribuição de conexões. Na Parte II, foi detalhada a implementação manual de oito algoritmos clássicos de grafos (BFS, DFS, Eulerianidade, Dijkstra, Bellman-Ford, Floyd-Warshall, Tarjan SCC e Kruskal MST), comparando seus tempos teóricos e práticos em 50 rodadas de testes. Na Parte III, foi realizada uma análise de propriedades da rede como pequeno mundo ({small-world}), lei de potência, robustez contra falhas e ataques direcionados, e comparação com os modelos clássicos de redes (Erdős-Rényi, Watts-Strogatz e Barabási-Albert), relacionando os dados com a divisão histórica real do clube.
 \end{abstract}
 
 %%
@@ -91,8 +91,8 @@ A Tabela \ref{tab:tratamentos} detalha cada etapa de tratamento considerada, seu
     Remoção de auto-loops & Não Aplicável & Não há auto-loops (arestas de um nó para si mesmo) no dataset. Verificado: \path{nx.number_of_selfloops(G) = 0}. \\
     Extração da maior componente conexa & Não Aplicável & O grafo original é totalmente conexo, possuindo exatamente 1 componente conexo de tamanho 34, abrangendo todos os nós. Nenhuma extração foi necessária. \\
     Filtragem por intervalo temporal & Não Aplicável & Não há marcações temporais nas arestas ou nós. O dataset representa um período fixo de observação (1970--1972) sem granularidade temporal. \\
-    Geração de pesos nas arestas & \textbf{Realizado} & Como a rede original é não-ponderada, foram atribuídos pesos sintéticos determinísticos via $w(u,v) = (u{+}v)\bmod 5 + 1$, gerando valores inteiros em $[1, 5]$. Isso viabiliza os algoritmos de caminho mínimo (Dijkstra, Bellman-Ford, Floyd-Warshall) e a MST (Kruskal). \\
-    Mapeamento de atributos sociais & \textbf{Realizado} & Foi extraído o atributo \path{club} de cada nó do NetworkX, mapeando a facção final de cada membro ( {"Mr. Hi"} ou  {"Officer"}) para uso em visualizações e análise da cisão social. \\
+    Geração de pesos nas arestas & \textbf{Realizado} & Como a rede original é não-ponderada, foram atribuídos pesos determinísticos via $w(u, v) = (u + v) \bmod 5 + 1$, gerando valores inteiros em $[1, 5]$. Isso permite rodar os algoritmos de caminho mínimo (Dijkstra, Bellman-Ford, Floyd-Warshall) e a MST (Kruskal). \\
+    Mapeamento de atributos sociais & \textbf{Realizado} & Foi extraído o atributo \path{club} de cada nó do NetworkX, mapeando o grupo final de cada membro ( {"Mr. Hi"} ou  {"Officer"}) para usar nas visualizações e na análise da divisão social. \\
     Conversão para lista de adjacência & \textbf{Realizado} & A representação em lista de adjacência foi exportada para \path{data/karate_adj_list.txt}, onde cada linha registra um nó e seus vizinhos. Este formato é usado como entrada direta dos algoritmos implementados do zero. \\
     Exportação para formato estruturado (CSV) & \textbf{Realizado} & A rede tratada foi exportada para \path{data/karate_club_edges.csv} com as colunas \path{source}, \path{target}, \path{weight}, \path{source_club} e \path{target_club}, servindo como base de dados persistida do projeto. \\
     \bottomrule
@@ -103,54 +103,38 @@ A Tabela \ref{tab:tratamentos} detalha cada etapa de tratamento considerada, seu
 
 Dentre os tratamentos listados, quatro foram efetivamente executados sobre o dataset por meio do script \path{scripts/gerar_dataset.py}:
 
-\begin{enumerate}
-    \item \textbf{Geração de Pesos nas Arestas:} Como a rede original é não-ponderada, a força do relacionamento foi simulada atribuindo pesos determinísticos não-negativos a cada aresta $(u, v)$ através da expressão:
-    \begin{equation}
-        w(u, v) = (u + v) \bmod 5 + 1
-    \end{equation}
-    Esta fórmula gera valores inteiros no intervalo $[1, 5]$. A definição de pesos positivos é indispensável para testar algoritmos de menor caminho (Dijkstra, Bellman-Ford, Floyd-Warshall) e árvore geradora mínima (Kruskal) de forma significativa.
-
-    \item \textbf{Mapeamento de Atributos Sociais:} O atributo \path{club} de cada nó foi extraído e registrado, indicando a facção final de cada membro após a cisão histórica do clube.
-
-    \item \textbf{Conversão para Lista de Adjacência:} O grafo foi exportado no formato de lista de adjacência para o arquivo \path{data/karate_adj_list.txt}. Cada linha do arquivo segue o formato \path{nó: [vizinho1, vizinho2, ...]}, representando explicitamente a estrutura de vizinhança de cada vértice. Este formato é utilizado diretamente pelos algoritmos implementados do zero (BFS, DFS, Dijkstra, etc.).
-
-    \item \textbf{Exportação para CSV Estruturado:} A rede tratada foi exportada para \path{data/karate_club_edges.csv}, com as colunas \path{source}, \path{target}, \path{weight}, \path{source_club} e \path{target_club}. Este arquivo serve como base de dados persistida e reproduzível do projeto.
-\end{enumerate}
+Primeiramente, foi feita a \textbf{geração de pesos nas arestas}: como a rede original é não-ponderada, a força da relação foi simulada colocando pesos determinísticos positivos em cada aresta $(u, v)$ usando a expressão:
+\begin{equation}
+    w(u, v) = (u + v) \bmod 5 + 1
+\end{equation}
+Esta fórmula gera valores inteiros de $1$ a $5$, o que permite testar algoritmos de menor caminho (Dijkstra, Bellman-Ford, Floyd-Warshall) e árvore geradora mínima (Kruskal). Também foi feito o \textbf{mapeamento de atributos sociais}: o atributo \path{club} de cada nó foi extraído, indicando a facção final de cada membro após a divisão histórica do clube. A rede também foi convertida para \textbf{lista de adjacência} no arquivo \path{data/karate_adj_list.txt}. Cada linha do arquivo segue o formato {nó: [vizinhos]}, mostrando as conexões de cada vértice e servindo de entrada direta para os algoritmos. Por fim, a rede foi salva em \textbf{CSV estruturado} no arquivo \path{data/karate_club_edges.csv}, contendo as colunas \path{source}, \path{target}, \path{weight}, \path{source_club} e \path{target_club}, garantindo uma base de dados pronta para reuso.
 
 \section{Parte I - Análise Estrutural Obrigatória}
 \label{sec:parte_i}
 
-Nesta primeira etapa, foram computadas e discutidas as principais métricas de topologia de redes no grafo de Zachary. As métricas estruturais analisadas seguem as definições matemáticas clássicas:
-\begin{itemize}
-    \item \textbf{Número de Vértices ($N$):} Cardinalidade do conjunto de nós, $N = |V|$.
-    \item \textbf{Número de Arestas ($M$):} Cardinalidade do conjunto de conexões, $M = |E|$.
-    \item \textbf{Grau Médio ($\langle k \rangle$):} Média dos graus de todos os nós, dada por $\langle k \rangle = \frac{2M}{N}$.
-    \item \textbf{Densidade ($D$):} Razão entre o número de arestas presentes e o número máximo de arestas possíveis:
-    \begin{equation}
-        D = \frac{2M}{N(N - 1)}
-    \end{equation}
-    \item \textbf{Componentes Conexos:} Subgrafos conexos maximais da rede.
-    \item \textbf{Diâmetro ($d$):} Maior distância geodésica entre qualquer par de nós $u, v \in V$:
-    \begin{equation}
-        d = \max_{u, v \in V} d(u, v)
-    \end{equation}
-    \item \textbf{Raio ($r$):} A excentricidade mínima observada entre todos os nós da rede:
-    \begin{equation}
-        r = \min_{u \in V} \max_{v \in V} d(u, v)
-    \end{equation}
-    \item \textbf{Comprimento Médio dos Caminhos ($L$):} Distância geodésica média calculada para todos os pares de nós:
-    \begin{equation}
-        L = \frac{1}{N(N - 1)} \sum_{u \neq v} d(u, v)
-    \end{equation}
-    \item \textbf{Coeficiente de Clusterização Médio ($\langle C \rangle$):} Média dos coeficientes de agrupamento local de cada nó $C_i$:
-    \begin{equation}
-        C_i = \frac{2 T_i}{k_i (k_i - 1)}
-    \end{equation}
-    onde $T_i$ representa o número de triângulos passando pelo nó $i$.
-    \item \textbf{Número de Triângulos ($T$):} Total de triplas de nós completamente conectadas (cliques de tamanho 3) presentes no grafo.
-\end{itemize}
+Nesta primeira etapa, foram calculadas as principais métricas da estrutura da rede de Zachary. As métricas incluem o \textbf{Número de Vértices ($N$)}, que indica o total de nós ($N = |V|$), e o \textbf{Número de Arestas ($M$)}, que indica o total de conexões ($M = |E|$). A partir deles, define-se o \textbf{Grau Médio ($\langle k \rangle$)} como a média de conexões de todos os nós, dada por $\langle k \rangle = \frac{2M}{N}$, e a \textbf{Densidade ($D$)} como a razão entre as conexões existentes e o total máximo de conexões possíveis:
+\begin{equation}
+    D = \frac{2M}{N(N - 1)}
+\end{equation}
+A conectividade é avaliada pelos \textbf{Componentes Conexos}, que indicam as partes da rede que estão interligadas. Usando a menor distância $d(u,v)$ entre os nós, define-se o \textbf{Diâmetro ($d$)} como a maior distância entre qualquer par de nós, dada por:
+\begin{equation}
+    d = \max_{u, v \in V} d(u, v)
+\end{equation}
+e o \textbf{Raio ($r$)} como a menor das maiores distâncias de um nó para os demais:
+\begin{equation}
+    r = \min_{u \in V} \max_{v \in V} d(u, v)
+\end{equation}
+O \textbf{Comprimento Médio dos Caminhos ($L$)} representa a distância média calculada para todos os pares de nós na rede:
+\begin{equation}
+    L = \frac{1}{N(N - 1)} \sum_{u \neq v} d(u, v)
+\end{equation}
+A proximidade dos nós é medida pelo \textbf{Coeficiente de Clusterização Médio ($\langle C \rangle$)}, que é a média dos coeficientes de agrupamento de cada nó $C_i$:
+\begin{equation}
+    C_i = \frac{2 T_i}{k_i (k_i - 1)}
+\end{equation}
+onde $T_i$ é o número de triângulos passando pelo nó $i$. Por fim, o \textbf{Número de Triângulos ($T$)} conta o total de grupos de três nós totalmente conectados entre si.
 
-A Tabela \ref{tab:metrics} consolida os resultados obtidos. Todos os parâmetros foram computados com sucesso. O grafo apresenta-se inteiramente conectado (único componente de tamanho 34) e com densidade de $13,9\%$. O baixo diâmetro ($d = 5$) e o comprimento médio de caminhos ($L \approx 2,41$) evidenciam o comportamento de "mundo pequeno" da rede. Além disso, o elevado coeficiente de clusterização médio ($\langle C \rangle \approx 0,571$) demonstra uma forte tendência à formação de grupos locais coesos. O número total de triângulos na rede é de 45.
+A Tabela \ref{tab:metrics} resume os resultados obtidos. O grafo é totalmente conectado (único componente com todos os 34 nós) e tem densidade de $13,9\%$. O baixo diâmetro ($d = 5$) e a distância média curta ($L \approx 2,41$) mostram que a rede é de "mundo pequeno". Além disso, o alto coeficiente de clusterização ($\langle C \rangle \approx 0,571$) mostra que há uma forte tendência de formação de pequenos grupos de amigos. O número total de triângulos na rede é 45.
 
 \begin{figure}[h]
   \centering
@@ -159,7 +143,7 @@ A Tabela \ref{tab:metrics} consolida os resultados obtidos. Todos os parâmetros
   \label{fig:karate_graph}
 \end{figure}
 
-A topologia visualizada na Figura \ref{fig:karate_graph} (gerada através do script \path{scripts/gerar_graficos.py}) evidencia a divisão social clássica que deu origem à cisão do grupo de caratê.
+A estrutura mostrada na Figura \ref{fig:karate_graph} (gerada com o script \path{scripts/gerar_graficos.py}) deixa clara a divisão social que levou à separação do grupo de caratê.
 
 \begin{table*}[t]
   \caption{Métricas Estruturais Computadas para o Grafo Zachary's Karate Club}
@@ -313,13 +297,7 @@ A Tabela \ref{tab:benchmark} apresenta os tempos obtidos em microssegundos ($\mu
   \end{tabular}
 \end{table*}
 
-Os resultados empíricos da Tabela \ref{tab:benchmark} estão em total conformidade com a análise assintótica clássica da teoria dos grafos:
-\begin{enumerate}
-    \item \textbf{Buscas de Ordem Linear:} BFS ($8,743$ $\mu$s), DFS ($9,631$ $\mu$s) e a verificação de Eulerianidade ($11,431$ $\mu$s) apresentaram os menores tempos. Sendo algoritmos de complexidade O(V + E), realizam poucas operações elementares em redes pequenas ($V=34, E=78$).
-    \item \textbf{Tarjan (SCC):} Embora linear O(V + E), Tarjan ($45,683$ $\mu$s) apresenta um custo constante maior em comparação ao BFS/DFS devido à manutenção explícita da pilha de nós e dos vetores auxiliares de controle.
-    \item \textbf{Dijkstra vs. Bellman-Ford:} Dijkstra ($40,114$ $\mu$s) foi aproximadamente 17 vezes mais rápido que Bellman-Ford ($695,052$ $\mu$s). O Dijkstra explora caminhos de forma gulosa com fila de prioridade, enquanto o Bellman-Ford realiza relaxações sistemáticas de todas as arestas por $V-1$ iterações, gerando muito mais operações.
-    \item \textbf{Floyd-Warshall:} Registrou o maior tempo ($4958,726$ $\mu$s), sendo 700 vezes mais lento que os lineares. Isso justifica-se por sua estrutura de loops triplos aninhados O(V\textsuperscript{3}), cuja complexidade se sobressai mesmo para um pequeno número de nós.
-\end{enumerate}
+Os resultados empíricos da Tabela \ref{tab:benchmark} estão em total conformidade com a análise assintótica clássica da teoria dos grafos. Como esperado, as \textbf{buscas de ordem linear} BFS ($8,743$ $\mu$s), DFS ($9,631$ $\mu$s) e a verificação de Eulerianidade ($11,431$ $\mu$s) apresentaram os menores tempos de execução; por possuírem complexidade $O(V + E)$, esses algoritmos realizam poucas operações elementares em redes de pequeno porte ($V=34, E=78$). O algoritmo de \textbf{Tarjan para SCCs}, embora também possua complexidade linear $O(V + E)$, registrou um tempo médio maior ($45,683$ $\mu$s) devido ao custo constante superior gerado pela manutenção explícita da pilha de nós e vetores de controle em memória. No âmbito de caminhos mínimos de origem única, o algoritmo de \textbf{Dijkstra} ($40,114$ $\mu$s) foi aproximadamente 17 vezes mais rápido que o de \textbf{Bellman-Ford} ($695,052$ $\mu$s); o Dijkstra adota uma abordagem gulosa eficiente com fila de prioridade, ao passo que o Bellman-Ford realiza relaxações sistemáticas de todas as arestas por $V-1$ iterações. Por fim, o algoritmo de \textbf{Floyd-Warshall} registrou o maior tempo absoluto ($4958,726$ $\mu$s), sendo cerca de 700 vezes mais lento que as buscas lineares, o que se justifica por sua complexidade teórica $O(V^3)$ decorrente da estrutura de três loops aninhados.
 
 Todos os desvios padrões calculados mostram dispersões baixas em relação à média, o que garante a precisão e a confiabilidade das medições efetuadas. A margem estreita obtida para o Intervalo de Confiança a 95\% consolida a robustez estatística dos dados levantados.
 
@@ -338,25 +316,12 @@ Para avaliar essa propriedade quantitativamente, foi utilizado o script \path{sc
     \sigma_{sw} = \frac{\frac{C_{obs}}{C_{rand}}}{\frac{L_{obs}}{L_{rand}}}
 \end{equation}
 
-Os valores médios obtidos na simulação foram:
-\begin{itemize}
-    \item Coeficiente de agrupamento observado ($C_{obs}$): $0,5706$
-    \item Coeficiente de agrupamento aleatório médio ($C_{rand}$): $0,1300$
-    \item Comprimento de caminho observado ($L_{obs}$): $2,4082$
-    \item Comprimento de caminho aleatório médio ($L_{rand}$): $2,4066$
-    \item Razão de Clusterização: $4,3901$
-    \item Razão de Distância: $1,0007$
-    \item Índice de Pequeno Mundo ($\sigma_{sw}$): $4,3872$
-\end{itemize}
+Os valores médios obtidos na simulação indicam um coeficiente de agrupamento observado ($C_{obs}$) de $0,5706$ frente a uma média aleatória ($C_{rand}$) de $0,1300$, e um comprimento de caminho observado ($L_{obs}$) de $2,4082$ frente a uma média aleatória ($L_{rand}$) de $2,4066$. Isso resulta em uma razão de agrupamento de $4,3901$ e uma razão de distância de $1,0007$. A aplicação desses valores fornece um índice de pequeno mundo $\sigma_{sw} \approx 4,3872$.
 
 Como $\sigma_{sw} \approx 4,39 > 1$, o grafo de Zachary exibe uma forte propriedade de pequeno mundo.
 
 \subsubsection{Significado e Implicações Práticas}
-Em termos práticos, a propriedade de pequeno mundo nesta rede social indica que:
-\begin{itemize}
-    \item \textbf{Eficiência de Propagação:} Informações, rumores, opiniões ou comportamentos podem se propagar de maneira extremamente rápida por todo o clube, exigindo pouquíssimos intermediários (distância média de $2,4$ saltos).
-    \item \textbf{Coesão Local:} Os membros formam fortes subgrupos e cliques coesos de amizades (alto $C_{obs}$), o que gera um ambiente de alta confiança mútua e reforço social dentro das subcomunidades locais, propiciando a polarização de ideias antes da cisão.
-\end{itemize}
+Em termos práticos, a propriedade de pequeno mundo nesta rede social indica uma elevada eficiência de propagação, sugerindo que informações, rumores, opiniões ou comportamentos se propagam de maneira rápida por todo o clube, exigindo pouquíssimos intermediários devido à distância média aproximada de apenas 2,4 saltos. Paralelamente, constata-se uma forte coesão local, visto que os membros formam fortes subgrupos e cliques coesos de amizades, representados pelo elevado $C_{obs}$, o que fomenta um ambiente de alta confiança mútua e reforço social dentro das subcomunidades antes da divisão definitiva do grupo.
 
 A implementação detalhada das funções executadas do zero para o cálculo de agrupamento local médio e comprimento de caminho a partir da busca em largura é descrita e documentada no script \path{scripts/analise_estrutural.py}.
 
@@ -371,11 +336,7 @@ onde $P(k)$ é a probabilidade de um vértice possuir grau $k$ e $\gamma$ é o e
 
 Para avaliar se o grafo de Zachary sugere uma lei de potência, foi realizada uma regressão linear no espaço log-log ($\ln(P(k))$ versus $\ln(k)$) a partir da frequência empírica de graus obtida do zero. O expoente estimado foi $\gamma \approx 0,5512$.
 
-A distribuição empírica de graus \textbf{não} sugere uma lei de potência pura devido a severos efeitos de tamanho finito ( {finite-size effects}):
-\begin{itemize}
-    \item \textbf{Amostra Reduzida:} Com apenas $N=34$ vértices, a faixa de variação dos graus ($k \in [1, 17]$) é extremamente estreita. A lei de potência é uma propriedade estatística assintótica aplicável a redes de grande porte (milhares de nós).
-    \item \textbf{Expoente Atípico:} O valor $\gamma \approx 0,55$ está muito abaixo do intervalo realista para redes livres de escala, o que aponta para a ausência de amostragem representativa.
-\end{itemize}
+A distribuição empírica de graus \textbf{não} sugere uma lei de potência pura devido a severos efeitos de tamanho finito (\textit{finite-size effects}). Em primeiro lugar, há o fator da \textbf{amostra reduzida}: com apenas $N=34$ vértices, a faixa de variação dos graus ($k \in [1, 17]$) é extremamente estreita, sendo a lei de potência uma propriedade estatística assintótica aplicável a redes de grande porte (milhares de nós). Em segundo lugar, o \textbf{expoente estimado} ($\gamma \approx 0,55$) está muito abaixo do intervalo realista para redes livres de escala reais, o que aponta para a ausência de amostragem representativa.
 Apesar disso, a distribuição é marcadamente assimétrica com cauda à direita. Embora não siga uma lei de potência formal, a rede demonstra a presença de dois super-hubs, o que constitui um estágio embrionário da dinâmica de conexão preferencial típica de redes livres de escala.
 
 O procedimento de regressão linear no espaço log-log e estimação empírica do expoente $\gamma$ está implementado no script \path{scripts/analise_estrutural.py}.
@@ -383,11 +344,7 @@ O procedimento de regressão linear no espaço log-log e estimação empírica d
 \subsection{Simulação de Robustez da Rede}
 \label{subsec:robustness}
 
-Para avaliar a tolerância a falhas e ataques na rede de Zachary, foram simulados dois cenários distintos sob a remoção de $5\%$ dos vértices ($5\%$ de $34 \approx 2$ nós):
-\begin{enumerate}
-    \item \textbf{Remoção Aleatória (Falha):} Sorteio de 2 nós para exclusão. Foram simuladas $1000$ rodadas independentes para calcular o tamanho médio do maior componente conexo LCC restante e seu comprimento médio de caminhos.
-    \item \textbf{Remoção Direcionada (Ataque):} Exclusão intencional dos 2 nós de maior grau (Nó 33, grau 17 e Nó 0, grau 16).
-\end{enumerate}
+Para avaliar a tolerância a falhas e ataques na rede de Zachary, foram simulados dois cenários distintos sob a remoção de $5\%$ dos vértices ($5\%$ de $34 \approx 2$ nós). O primeiro cenário consiste na \textbf{remoção aleatória (falha)}, simulando o sorteio de 2 nós para exclusão ao longo de 1000 rodadas independentes para calcular o tamanho médio do maior componente conexo (LCC) restante e seu comprimento médio de caminhos. O segundo cenário consiste na \textbf{remoção direcionada (ataque)}, na qual são excluídos intencionalmente os 2 nós de maior grau da rede (Nó 33 com grau 17, e Nó 0 com grau 16).
 
 A Tabela \ref{tab:robustness} descreve os impactos dessas remoções obtidos através das simulações computadas pelo script \path{scripts/analise_estrutural.py}.
 
@@ -405,46 +362,35 @@ A Tabela \ref{tab:robustness} descreve os impactos dessas remoções obtidos atr
   \end{tabular}
 \end{table*}
 
-A rede demonstra um comportamento típico de sistemas complexos estruturados em torno de hubs:
-\begin{itemize}
-    \item \textbf{Resiliência a Falhas Aleatórias:} Sob remoção de nós aleatórios, a rede quase não sofre impacto. O LCC restante mantém, em média, $31,55$ nós (dos $32$ possíveis), e a distância média de caminhos cresce de forma imperceptível (de $2,408$ para $2,415$), demonstrando que a perda aleatória de membros não afeta a coesão do clube.
-    \item \textbf{Vulnerabilidade Crítica a Ataques:} A remoção direcionada dos hubs (Nó 0 e Nó 33) altera drasticamente a estrutura. O grafo deixa de ser conexo e fragmenta-se em \textbf{três componentes isolados} (um componente maior de tamanho 26, um de tamanho 5 e um nó isolado de tamanho 1). A distância média no componente principal se eleva significativamente para $2,591$.
-\end{itemize}
+A rede mostra um comportamento típico de sistemas que dependem de nós principais (hubs). Ela tem uma grande \textbf{resistência a falhas aleatórias}: ao remover nós ao acaso, a rede quase não sofre impacto, mantendo a maior parte conectada com média de $31,55$ nós (dos $32$ possíveis) e com um aumento muito pequeno na distância média (de $2,408$ para $2,415$). Por outro lado, a rede é \textbf{muito frágil contra ataques direcionados}: remover os hubs 0 e 33 muda completamente a estrutura, quebrando a conexão da rede e dividindo o grafo em três partes isoladas (uma de tamanho 26, uma de tamanho 5 e um nó sozinho), e aumentando a distância média para $2,591$ na parte principal.
 
 Os algoritmos e funções auxiliares (como a busca em largura modificada para identificação de componentes conexos) e o loop principal de simulação numérica por Monte Carlo estão definidos em detalhes no script \path{scripts/analise_estrutural.py}.
 
 \subsection{Comparação com Modelos Clássicos}
 \label{subsec:modelos_classicos}
 
-Foi avaliada a aderência do grafo real aos três modelos canônicos de redes complexas:
-\begin{enumerate}
-    \item \textbf{Erdős-Rényi (ER - Grafo Aleatório):} O modelo ER não representa esta rede. Grafos aleatórios com mesma densidade possuem coeficiente de clusterização muito menor ($C_{rand} \approx 0,13$ vs. $C_{obs} \approx 0,57$) e uma distribuição de graus simétrica e de cauda leve (Poisson), incapaz de modelar super-hubs.
-    \item \textbf{Watts-Strogatz (WS - Pequeno Mundo):} O modelo WS explica satisfatoriamente os caminhos curtos e o elevado coeficiente de clusterização da rede. Contudo, falha ao impor uma distribuição de graus homogênea, onde a maioria dos nós possui grau em torno da média, sendo incapaz de produzir os hubs altamente conectados presentes na rede de Zachary.
-    \item \textbf{Barabási-Albert (BA - Livre de Escala):} O modelo BA explica a assimetria na distribuição de graus e o surgimento espontâneo de hubs dominantes por meio do mecanismo de conexão preferencial. No entanto, redes geradas pelo algoritmo BA clássico apresentam coeficientes de clusterização local muito inferiores ao observado nesta rede de amizades sociais.
-\end{enumerate}
+Foi testado como o grafo real se parece com os três modelos clássicos de redes. O modelo de \textbf{Erdős-Rényi (ER)} não serve para a rede de Zachary. Grafos aleatórios com a mesma densidade têm um agrupamento de amigos muito menor ($C_{rand} \approx 0,13$ vs. $C_{obs} \approx 0,57$) e não criam nós muito conectados (hubs). O modelo de \textbf{Watts-Strogatz (WS)} explica bem as distâncias curtas e o alto agrupamento local, mas falha porque prevê uma rede onde todos os nós têm quase a mesma quantidade de conexões, não prevendo nós de grau muito alto. Por fim, o modelo de \textbf{Barabási-Albert (BA)} explica a presença de hubs por causa da conexão preferencial, mas gera um agrupamento local muito menor do que o real.
 
-\textbf{Conclusão:} O grafo real aproxima-se de um modelo \textbf{híbrido}. Trata-se de uma rede social típica, que conjuga o alto agrupamento local e os caminhos curtos do modelo \textbf{Watts-Strogatz} com a estrutura hierárquica baseada em hubs explicada pelo modelo \textbf{Barabási-Albert}.
+\textbf{Conclusão:} O grafo real parece um modelo \textbf{misto}. É uma rede social típica, que junta o alto agrupamento de amigos e os caminhos curtos do modelo \textbf{Watts-Strogatz} com a estrutura de nós principais (hubs) do modelo \textbf{Barabási-Albert}.
 
 \subsection{A Descoberta Mais Interessante}
 \label{subsec:descoberta_interessante}
 
-A descoberta mais instigante da análise reside no resultado da simulação de ataque direcionado (Seção \ref{subsec:robustness}). A exclusão dos nós $0$ e $33$ dividiu fisicamente o grafo em três componentes isolados. 
+A descoberta mais interessante da análise está no resultado da simulação de ataque direcionado (Seção \ref{subsec:robustness}). Tirar os nós $0$ e $33$ dividiu a rede em três partes isoladas. 
 
-Sob o ponto de vista da sociologia matemática, esse comportamento prediz de forma puramente topológica a dissolução do clube original. Os nós de maior grau representavam o Instrutor e o Administrador, cuja rivalidade culminou na fragmentação real do clube. A análise de robustez revela que a coesão social do grupo dependia exclusivamente das conexões transversais mantidas por essas duas lideranças. Sem elas, o tecido social fragmentou-se espontaneamente em grupos disjuntos. Isso demonstra como a estrutura matemática de conexões de um grupo contém as sementes de sua própria instabilidade política e cisão histórica.
+Do ponto de vista social e matemático, esse resultado mostra de forma visual a separação do clube original. Os nós de maior grau representavam o Instrutor e o Administrador, cuja rivalidade gerou a divisão real do clube. A análise de robustez revela que a união do grupo dependia inteiramente das ligações feitas por esses dois líderes. Sem eles, o grupo se dividiu sozinho em partes separadas. Isso demonstra como a estrutura matemática de conexões de um grupo guarda a explicação de sua própria separação histórica.
 
 \section{Conclusão}
 
-O presente relatório cumpriu com êxito os objetivos de caracterização estrutural e avaliação de algoritmos de Teoria dos Grafos sobre a clássica rede social  {Zachary's Karate Club}.
+Este relatório atingiu os objetivos de analisar a estrutura e avaliar os algoritmos sobre a clássica rede social {Zachary's Karate Club}.
 
-Na caracterização de topologia (Parte I), foi comprovada a estrutura de mundo pequeno da rede, dotada de alto agrupamento local e baixo diâmetro, polarizada sob os dois nós de grau elevado representados pelo instrutor e pelo administrador do clube.
+Na análise de estrutura (Parte I), ficou provado que a rede é de mundo pequeno, com alto agrupamento local e distância curta, organizada em torno de dois nós muito conectados (o instrutor e o administrador do clube).
 
-Na vertente algorítmica (Parte II), foram implementados com sucesso os algoritmos de busca e caminho mínimo, validando experimentalmente seu comportamento por meio de benchmarks estatísticos robustos. A concordância estrita entre as curvas teóricas e empíricas consolida a correlação prática direta com as análises conduzidas na disciplina.
+Na parte de algoritmos (Parte II), foram feitas as implementações das buscas e caminhos mínimos, validando os tempos de execução na prática. A semelhança entre os tempos teóricos e práticos confirma os conceitos ensinados na disciplina.
 
-Por fim, a análise avançada (Parte III) desvelou que a rede é resiliente a falhas fortuitas, mas extremamente vulnerável a ataques cirúrgicos contra suas lideranças (hubs), um fato matemático que antecipou e espelhou de forma precisa o destino sociológico e a cisão histórica do clube de caratê original.
+Por fim, a análise avançada (Parte III) mostrou que a rede resiste bem a falhas aleatórias, mas é muito frágil a ataques direcionados contra os líderes (hubs). Esse resultado matemático bate exatamente com a história real da separação do clube de caratê.
 
-\begin{acks}
-  Agradece-se à Universidade Federal da Bahia (UFBA) pelo apoio acadêmico, e aos pesquisadores do framework  {Karate Club} pela disponibilização do artigo de base. Os códigos-fonte, scripts, conjunto de dados tratados e este relatório estão disponíveis publicamente no repositório: \url{https://github.com/maccedoz/Analisando-Grafos-do-SNAP-MATA53}.
-\end{acks}
+
 
 \begin{thebibliography}{99}
 
