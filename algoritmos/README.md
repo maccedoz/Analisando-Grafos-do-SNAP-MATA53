@@ -4,7 +4,7 @@ Este diretório contém a implementação modularizada de 8 algoritmos clássico
 
 ---
 
-## 📊 Grafo Base Utilizado — Zachary's Karate Club
+## Grafo Base Utilizado — Zachary's Karate Club
 
 Como base para ilustrar as execuções, utilizamos o grafo **Zachary's Karate Club** obtido via NetworkX. Os dados tratados estão em `data/karate_club_edges.csv` e `data/karate_adj_list.txt`.
 
@@ -31,7 +31,7 @@ with open('data/karate_club_edges.csv') as f:
 
 ---
 
-## 🛠️ Como Executar cada Algoritmo
+## Como Executar cada Algoritmo
 
 Você pode importar e utilizar os algoritmos em seus próprios scripts Python a partir do pacote `algoritmos`. Certifique-se de que a pasta raiz do projeto esteja no seu `PYTHONPATH` ou configure o `sys.path`.
 
@@ -101,7 +101,7 @@ arestas_mst, peso_total = kruskal_mst(graph, weights=weights)
 
 ---
 
-## 🏃 Executando o Script Demonstrativo
+## Executando o Script Demonstrativo
 
 Para rodar todos os algoritmos de uma vez usando o grafo do Karate Club e verificar os resultados completos, execute o seguinte script a partir da raiz do repositório:
 

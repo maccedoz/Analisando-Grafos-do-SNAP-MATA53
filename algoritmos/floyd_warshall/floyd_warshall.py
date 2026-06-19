@@ -1,21 +1,38 @@
-def floyd_warshall(graph, weights):
+def floyd_warshall(graph, weights, verbose=False):
     """
     Algoritmo de Floyd-Warshall.
     Calcula as menores distâncias entre todos os pares de vértices do grafo.
     """
     nodes = list(graph.keys())
-    # Inicializar matriz de distâncias
     dist = {u: {v: float('inf') for v in nodes} for u in nodes}
     for u in nodes:
         dist[u][u] = 0
         for v in graph.get(u, []):
             dist[u][v] = weights.get((u, v), 1.0)
             
-    for k in nodes:
+    if verbose:
+        print("Floyd-Warshall: inicializamos a matriz com os pesos das arestas diretas.")
+        print("Passo a passo: testamos cada nó como intermediário entre todos os pares.")
+
+    for idx, k in enumerate(nodes):
+        if verbose and idx < 3:
+            print(f"Passo k={k}: testando nó {k} como intermediário...")
+        count = 0
         for i in nodes:
             for j in nodes:
                 if dist[i][k] + dist[k][j] < dist[i][j]:
                     dist[i][j] = dist[i][k] + dist[k][j]
+                    count += 1
+        if verbose and idx < 3:
+            print(f"  Melhorou o caminho de {count} pares de nós.")
+            
+    if verbose:
+        print("... Continuando o processo para todos os outros nós intermediários ...")
+        print("Matriz de caminhos mínimos calculada com sucesso.")
+        print("Distâncias mínimas finais encontradas (a partir do nó 0 para todos os 34 nós):")
+        for dest in sorted(dist[0].keys()):
+            print(f"  De 0 a {dest}: {dist[0][dest]:.1f}")
+        
     return dist
 
 if __name__ == "__main__":

@@ -4,13 +4,13 @@ Calcula o caminho mínimo de uma origem para todos os nós, suportando pesos neg
 
 ---
 
-## ▶️ Como Executar
+## Como Executar
 
 ```bash
 python3 algoritmos/bellman_ford/bellman_ford.py
 ```
 
-## 📋 Saída Esperada (Zachary's Karate Club, origem: nó 0)
+## Saída Esperada (Zachary's Karate Club, origem: nó 0)
 
 ```
 Bellman-Ford — Zachary's Karate Club (origem: nó 0 / Mr. Hi)

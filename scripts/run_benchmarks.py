@@ -5,28 +5,20 @@ import math
 import numpy as np
 import networkx as nx
 
-# Adicionar o diretório raiz ao path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from algoritmos import bfs, dfs, is_eulerian, dijkstra, bellman_ford, floyd_warshall, tarjan_scc, kruskal_mst
 
-# 1. Carregar o Grafo Zachary's Karate Club
 G = nx.karate_club_graph()
-
-# Converter para representação de lista de adjacência (dicionário de listas)
 graph = {u: list(G.neighbors(u)) for u in G.nodes()}
 
-# Gerar pesos determinísticos não-negativos para as arestas (para caminhos mínimos e MST)
 weights = {}
 for u, v in G.edges():
     w = (u + v) % 5 + 1
     weights[(u, v)] = w
     weights[(v, u)] = w
 
-# Configurações do benchmark
-N_TRIALS = 50  # n = 50 rodadas para o cálculo estatístico
-
-# Número de execuções internas para cada algoritmo (para acumular tempo suficiente contra ruídos)
+N_TRIALS = 50
 INNER_RUNS = {
     "BFS": 1000,
     "DFS": 1000,
@@ -39,10 +31,8 @@ INNER_RUNS = {
 }
 
 results = {}
-
 print("Iniciando benchmarks (n = 50 rodadas)...")
 
-# Dicionário de funções para os algoritmos
 funcs = {
     "BFS": lambda: bfs(graph, 0),
     "DFS": lambda: dfs(graph, 0),
@@ -54,7 +44,6 @@ funcs = {
     "Kruskal MST": lambda: kruskal_mst(graph, weights)
 }
 
-# Executar benchmarks
 for name, func in funcs.items():
     inner_runs = INNER_RUNS[name]
     trial_times = []
@@ -68,7 +57,6 @@ for name, func in funcs.items():
         trial_times.append(single_run_time)
         
     trial_times = np.array(trial_times) * 1e6
-    
     mean = np.mean(trial_times)
     std_dev = np.std(trial_times, ddof=1)
     

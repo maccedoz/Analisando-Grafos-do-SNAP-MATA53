@@ -4,13 +4,13 @@ Algoritmo de exploração que percorre o grafo o mais fundo possível antes de r
 
 ---
 
-## ▶️ Como Executar
+## Como Executar
 
 ```bash
 python3 algoritmos/dfs/dfs.py
 ```
 
-## 📋 Saída Esperada (Zachary's Karate Club)
+## Saída Esperada (Zachary's Karate Club)
 
 ```
 DFS — Zachary's Karate Club (nó inicial: 0 / Mr. Hi)

@@ -4,13 +4,13 @@ Algoritmo clássico de busca e exploração em grafos. Visita primeiro todos os 
 
 ---
 
-## ▶️ Como Executar
+## Como Executar
 
 ```bash
 python3 algoritmos/bfs/bfs.py
 ```
 
-## 📋 Saída Esperada (Zachary's Karate Club)
+## Saída Esperada (Zachary's Karate Club)
 
 ```
 BFS — Zachary's Karate Club (nó inicial: 0 / Mr. Hi)

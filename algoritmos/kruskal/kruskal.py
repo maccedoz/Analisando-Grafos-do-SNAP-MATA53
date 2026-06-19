@@ -1,4 +1,4 @@
-def kruskal_mst(graph, weights):
+def kruskal_mst(graph, weights, verbose=False):
     """
     Algoritmo de Kruskal.
     Calcula a Árvore Geradora Mínima (MST) de um grafo não direcionado ponderado.
@@ -25,7 +25,6 @@ def kruskal_mst(graph, weights):
             return True
         return False
         
-    # Coletar todas as arestas únicas (garantindo u < v para evitar duplicadas no grafo não direcionado)
     edges = []
     seen = set()
     for u in graph:
@@ -36,18 +35,28 @@ def kruskal_mst(graph, weights):
                 w = weights.get((u, v), 1.0)
                 edges.append((w, u, v))
                 
-    # Ordenar arestas por peso
     edges.sort()
+    
+    if verbose:
+        print("Kruskal: primeiro ordenamos todas as arestas pelo peso.")
+        print(f"Total de arestas no grafo ordenadas: {len(edges)}")
     
     mst_edges = []
     total_weight = 0.0
+    step = 1
     for w, u, v in edges:
         if union(u, v):
             mst_edges.append((u, v, w))
             total_weight += w
+            if verbose:
+                print(f"Passo {step}: Adicionamos a aresta ({u}, {v}) com peso {w:.1f} à MST.")
+            step += 1
             if len(mst_edges) == len(graph) - 1:
                 break
                 
+    if verbose:
+        print(f"MST finalizada com {len(mst_edges)} arestas e peso total de {total_weight:.1f}")
+        
     return mst_edges, total_weight
 
 if __name__ == "__main__":

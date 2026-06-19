@@ -4,13 +4,13 @@ Constrói a Árvore Geradora Mínima (MST) ordenando as arestas por peso e usand
 
 ---
 
-## ▶️ Como Executar
+## Como Executar
 
 ```bash
 python3 algoritmos/kruskal/kruskal.py
 ```
 
-## 📋 Saída Esperada (Zachary's Karate Club)
+## Saída Esperada (Zachary's Karate Club)
 
 ```
 Kruskal MST — Zachary's Karate Club

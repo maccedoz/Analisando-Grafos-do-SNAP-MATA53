@@ -1,89 +1,78 @@
 # Análise Estrutural e Algorítmica da Rede Zachary's Karate Club
 
-> 📦 **Repositório GitHub:** [maccedoz/Analisando-Grafos-do-SNAP-MATA53](https://github.com/maccedoz/Analisando-Grafos-do-SNAP-MATA53.git)
+> **Repositório GitHub:** [maccedoz/Analisando-Grafos-do-SNAP-MATA53](https://github.com/maccedoz/Analisando-Grafos-do-SNAP-MATA53.git)
 
-Este repositório contém o código-fonte, scripts de análise de desempenho e o conjunto de dados tratados para o estudo topológico e algorítmico da célebre rede social **Zachary's Karate Club**. O trabalho foi desenvolvido como requisito avaliativo para a disciplina de Teoria dos Grafos da Universidade Federal de Lavras (UFLA).
-
----
-
-## 📁 Estrutura do Repositório
-
-O projeto está estruturado em pastas organizadas por finalidade:
-
-*   **`algoritmos/`**: Pacote Python contendo as implementações manuais (do zero) de 8 algoritmos clássicos de grafos. Cada algoritmo possui sua própria pasta e documentação dedicada:
-    1.  [bfs/](algoritmos/bfs/) ([README](algoritmos/bfs/README.md)): Busca em Largura (BFS)
-    2.  [dfs/](algoritmos/dfs/) ([README](algoritmos/dfs/README.md)): Busca em Profundidade (DFS)
-    3.  [eulerian/](algoritmos/eulerian/) ([README](algoritmos/eulerian/README.md)): Verificação de Eulerianidade
-    4.  [dijkstra/](algoritmos/dijkstra/) ([README](algoritmos/dijkstra/README.md)): Algoritmo de Dijkstra
-    5.  [bellman_ford/](algoritmos/bellman_ford/) ([README](algoritmos/bellman_ford/README.md)): Algoritmo de Bellman-Ford
-    6.  [floyd_warshall/](algoritmos/floyd_warshall/) ([README](algoritmos/floyd_warshall/README.md)): Algoritmo de Floyd-Warshall
-    7.  [tarjan/](algoritmos/tarjan/) ([README](algoritmos/tarjan/README.md)): Algoritmo de Tarjan (SCC)
-    8.  [kruskal/](algoritmos/kruskal/) ([README](algoritmos/kruskal/README.md)): Algoritmo de Kruskal (MST)
-    *   *Consulte o [algoritmos/README.md](algoritmos/README.md) do pacote geral para uma visão integrada.*
-*   **`scripts/`**: Scripts de automação, análise e simulação:
-    *   `gerar_dataset.py`: Exporta o grafo clássico do NetworkX para o formato CSV estruturado.
-    *   `gerar_graficos.py`: Gera os gráficos em alta definição para o relatório.
-    *   `run_benchmarks.py`: Executa o benchmark de tempo de execução com 50 rodadas e Intervalo de Confiança a 95%.
-    *   `analise_estrutural.py`: Roda a análise estrutural avançada (Small-world, Lei de Potência, Robustez).
-    *   `executar_algoritmos.py`: Script de teste rápido que executa os 8 algoritmos sobre o grafo do artigo de referência (SIGMOD 2026).
-    *   `script.py`: ~~removido~~ (era simulador de outro projeto, não relacionado ao Karate Club)
-*   **`data/`**: Pasta para o conjunto de dados estruturado:
-    *   `karate_club_edges.csv`: Lista de adjacência tratada contendo arestas, pesos normalizados e facções dos nós.
-*   **`graficos/`**: Pasta de saída para as visualizações geradas:
-    *   `karate_club_graph.png`: Visualização do grafo com nós coloridos conforme a facção.
-    *   `karate_club_degree_distribution.png`: Distribuição de frequências por grau de nós.
-*   **`relatorio/`**: Arquivos do artigo científico científico completo:
-    *   `relatorio.tex`: Relatório científico em LaTeX estruturado segundo a classe `webmedia`.
-    *   `sample-base.bib`: Banco de referências BibTeX.
-*   **`artigos/`**: Artigos científicos e referências em texto associados ao projeto.
+Este repositório contém a implementação manual de algoritmos clássicos de Teoria dos Grafos, scripts de caracterização de redes complexas, benchmarks estatísticos de desempenho e um artigo científico completo em LaTeX. O trabalho analisa as propriedades estruturais da célebre rede social **Zachary's Karate Club**.
 
 ---
 
-## 🛠️ Pré-requisitos e Execução
+## Estrutura do Repositório
 
-### Instalação das Bibliotecas
-Os scripts utilizam a versão padrão do Python 3 e exigem as seguintes bibliotecas:
+O projeto está organizado da seguinte forma:
+
+*   **`algoritmos/`**: Pacote modular contendo as implementações manuais (do zero) de 8 algoritmos de grafos. Cada subpasta possui uma documentação (`README.md`) explicando sua complexidade e comportamento:
+    1.  [bfs/](algoritmos/bfs/) (Busca em Largura)
+    2.  [dfs/](algoritmos/dfs/) (Busca em Profundidade)
+    3.  [eulerian/](algoritmos/eulerian/) (Verificação de Eulerianidade)
+    4.  [dijkstra/](algoritmos/dijkstra/) (Algoritmo de Dijkstra para caminhos mínimos)
+    5.  [bellman_ford/](algoritmos/bellman_ford/) (Algoritmo de Bellman-Ford com suporte a ciclos negativos)
+    6.  [floyd_warshall/](algoritmos/floyd_warshall/) (Floyd-Warshall para todos os pares de caminhos mínimos)
+    7.  [tarjan/](algoritmos/tarjan/) (Algoritmo de Tarjan para Componentes Fortemente Conexos)
+    8.  [kruskal/](algoritmos/kruskal/) (Algoritmo de Kruskal para Árvore Geradora Mínima)
+*   **`scripts/`**: Scripts Python para automação e execução:
+    *   `gerar_dataset.py`: Trata a rede clássica, calcula pesos sintéticos deterministicamente e exporta no formato CSV.
+    *   `gerar_graficos.py`: Produz a visualização do grafo e o histograma de distribuição de graus.
+    *   `run_benchmarks.py`: Executa o benchmark estatístico dos algoritmos em 50 rodadas independentes com Intervalo de Confiança de 95%.
+    *   `analise_estrutural.py`: Implementa do zero as métricas complexas (Small-world Humphries-Gurney, Lei de Potência log-log e simulações Monte Carlo de Robustez estrutural).
+    *   `executar_algoritmos.py`: Menu interativo para executar cada algoritmo individualmente em modo detalhado (passo a passo) ou rodar todos consecutivamente.
+*   **`data/`**: Base de dados tratada (`karate_club_edges.csv`).
+*   **`graficos/`**: Imagens e plots gerados pelo projeto.
+*   **`relatorio/`**: Artigo completo em LaTeX (`224116504.tex`) usando o formato de duas colunas `webmedia`.
+*   **`artigos/`**: Literatura e publicações de referência.
+*   **`venv/`**: Ambiente virtual Python contendo as dependências pré-instaladas.
+
+---
+
+## Como o Repositório Funciona (Guia de Execução)
+
+Para garantir que todas as bibliotecas necessárias sejam encontradas e executadas sem erros, utilize o interpretador Python do ambiente virtual (`venv/bin/python3`) a partir do diretório raiz do projeto.
+
+### 1. Configurando o Ambiente
+Para ativar o ambiente virtual ou instalar os requisitos:
 ```bash
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### Como Executar os Scripts
+### 2. Rodando o Menu Interativo dos Algoritmos
+O script de execução permite escolher interativamente qual algoritmo testar em tempo de execução, imprimindo o passo a passo simplificado com as explicações e caminhos detalhados em português:
+```bash
+venv/bin/python3 scripts/executar_algoritmos.py
+```
+*Selecione opções de `1` a `8` para acompanhar o comportamento passo a passo de um algoritmo específico, `9` para rodar todos sequencialmente de forma simplificada, ou `0` para sair.*
 
-Todos os comandos devem ser rodados a partir do diretório raiz do projeto:
+### 3. Gerando os Gráficos do Relatório
+Gera a visualização circular do grafo (com nós numerados de 0 a 33 e cores indicando as facções) em `graficos/karate_club_graph.png`:
+```bash
+venv/bin/python3 scripts/gerar_graficos.py
+```
 
-1.  **Gerar o Dataset Tratado (`data/karate_club_edges.csv`)**:
-    ```bash
-    python3 scripts/gerar_dataset.py
-    ```
-2.  **Gerar as Visualizações e Gráficos (`graficos/`)**:
-    ```bash
-    python3 scripts/gerar_graficos.py
-    ```
-3.  **Executar a Medição Temporal dos Algoritmos (Benchmark)**:
-    ```bash
-    python3 scripts/run_benchmarks.py
-    ```
-4.  **Executar a Análise de Pequeno Mundo, Lei de Potência e Robustez**:
-    ```bash
-    python3 scripts/analise_estrutural.py
-    ```
-5.  **Rodar a Demonstração de Todos os Algoritmos (Grafo do Artigo Analisado)**:
-    ```bash
-    python3 scripts/executar_algoritmos.py
-    ```
-6.  **Configurar o Ambiente Rapidamente**:
-    ```bash
-    ./dev.sh
-    ```
+### 4. Executando o Benchmark Estatístico
+Executa a medição de tempo dos algoritmos sobre 50 rodadas e calcula a média, desvio padrão e o Intervalo de Confiança a 95% usando a distribuição Normal (Z):
+```bash
+venv/bin/python3 scripts/run_benchmarks.py
+```
+
+### 5. Executando a Análise Estrutural e Robustez
+Calcula o índice Small-worldness ($\sigma_{sw}$), estima o expoente da lei de potência ($\gamma$) e realiza simulações Monte Carlo de remoção de 5% de nós (falha aleatória vs. ataque direcionado aos hubs):
+```bash
+venv/bin/python3 scripts/analise_estrutural.py
+```
 
 ---
 
-## 📊 Resumo dos Resultados Obtidos
+## Resumo dos Resultados Topológicos
 
-*   **Propriedades Básicas**: A rede é totalmente conexa (1 componente de tamanho 34), possui 78 arestas, densidade de 13,9%, diâmetro igual a 5, raio igual a 3, comprimento médio dos caminhos de 2,408 saltos e coeficiente de clusterização de 0,571.
-*   **Small-World**: Índice sigma_sw ≈ 4,39 > 1. O grafo apresenta comportamento acentuado de pequeno mundo (clusterização local alta com caminhos curtos).
-*   **Lei de Potência**: O expoente estimado é de gamma ≈ 0,55. O grafo não segue uma lei de potência pura devido ao seu tamanho reduzido (N=34), mas sua distribuição é assimétrica e governada por hubs.
-*   **Robustez**:
-    *   *Falha Aleatória (5% dos nós)*: O grafo se mantém conexo com tamanho médio do LCC de 31,55 (de 32) e caminhos de 2,41 saltos.
-    *   *Ataque Direcionado (5% mais centrais)*: A remoção dos hubs 0 e 33 fratura a rede em 3 componentes isolados.
-*   **Descoberta Sociológica**: A análise de ataque direcionado prediz matematicamente a cisão social real do clube de caratê descrita historicamente por Zachary.
+*   **Topologia do Zachary's Karate Club**: 34 nós, 78 arestas, densidade de 13.9%, diâmetro geodésico de 5 saltos, comprimento de caminho médio de 2.408 saltos e coeficiente de clusterização médio de 0.571.
+*   **Propriedade Small-World**: O coeficiente local de agrupamento é 4.4 vezes superior à sua contraparte aleatória de Erdős-Rényi, confirmando comportamento acentuado de pequeno mundo ($\sigma_{sw} \approx 4.39$).
+*   **Robustez e Vulnerabilidade**: Sob 5% de falhas aleatórias a rede é extremamente tolerante. Contudo, sob ataque direcionado aos dois maiores hubs (nós 0 e 33), a rede fragmenta-se fisicamente em 3 componentes isolados. Este resultado matemático prediz a cisão social real sofrida historicamente pelo clube.

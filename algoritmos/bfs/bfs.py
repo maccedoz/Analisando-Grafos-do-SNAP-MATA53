@@ -1,4 +1,4 @@
-def bfs(graph, start):
+def bfs(graph, start, verbose=False):
     """
     Busca em Largura (BFS).
     Retorna a ordem de visitação dos vértices a partir de um vértice inicial.
@@ -6,13 +6,26 @@ def bfs(graph, start):
     visited = {start}
     queue = [start]
     order = []
+    step = 1
+    if verbose:
+        print(f"BFS (Busca em Largura): primeiro chegamos no nó {start}")
     while queue:
         u = queue.pop(0)
         order.append(u)
-        for v in graph.get(u, []):
-            if v not in visited:
-                visited.add(v)
-                queue.append(v)
+        neighbors = graph.get(u, [])
+        unvisited = [v for v in neighbors if v not in visited]
+        if verbose:
+            print(f"Passo {step}: visitamos o nó {u} e analisamos os vizinhos {neighbors}")
+            if unvisited:
+                print(f"  Vizinhos não visitados encontrados: {unvisited}. Adicionando à fila e marcando como visitados.")
+            else:
+                print("  Todos os vizinhos deste nó já foram visitados.")
+        for v in unvisited:
+            visited.add(v)
+            queue.append(v)
+        step += 1
+    if verbose:
+        print(f"Todos os {len(visited)} nós foram visitados.")
     return order
 
 if __name__ == "__main__":

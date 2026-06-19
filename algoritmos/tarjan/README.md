@@ -4,13 +4,13 @@ Identifica Componentes Fortemente Conexos (SCCs) em grafos direcionados usando u
 
 ---
 
-## ▶️ Como Executar
+## Como Executar
 
 ```bash
 python3 algoritmos/tarjan/tarjan.py
 ```
 
-## 📋 Saída Esperada (Zachary's Karate Club)
+## Saída Esperada (Zachary's Karate Club)
 
 ```
 Tarjan SCC — Zachary's Karate Club

@@ -4,13 +4,13 @@ Determina se o grafo possui circuito ou caminho euleriano. Para grafos não-dire
 
 ---
 
-## ▶️ Como Executar
+## Como Executar
 
 ```bash
 python3 algoritmos/eulerian/eulerian.py
 ```
 
-## 📋 Saída Esperada (Zachary's Karate Club)
+## Saída Esperada (Zachary's Karate Club)
 
 ```
 Eulerianidade — Zachary's Karate Club
@@ -22,4 +22,4 @@ Explicação: como 12 > 2 nós têm grau ímpar, não existe
 circuito nem caminho euleriano.
 ```
 
-**Interpretação:** 12 dos 34 membros do clube possuem número ímpar de amizades. Isso é esperado em redes sociais reais — a eulerianidade exigiria uma estrutura muito artificial e simétrica, incompatível com relações humanas orgânicas.
+**Interpretação:** 12 dos 34 membros do clube possuem número ímpar de amizades. Isso é esperado em redes sociais reais a eulerianidade exigiria uma estrutura muito artificial e simétrica, incompatível com relações humanas orgânicas.

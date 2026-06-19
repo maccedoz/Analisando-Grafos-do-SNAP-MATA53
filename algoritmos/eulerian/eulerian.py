@@ -1,4 +1,4 @@
-def is_eulerian(graph):
+def is_eulerian(graph, verbose=False):
     """
     Verificação de Eulerianidade do grafo.
     Determina se um grafo não-direcionado é Euleriano, Semi-Euleriano ou Não Euleriano.
@@ -10,8 +10,15 @@ def is_eulerian(graph):
             break
             
     if start_node is None:
+        if verbose:
+            print("Verificação de Eulerianidade:")
+            print("  Grafo não possui vértices com arestas. É considerado Euleriano (Vazio).")
         return "Euleriano (Vazio)"
         
+    if verbose:
+        print("Verificação de Eulerianidade:")
+        print(f"Passo 1: Verificar se o grafo é conexo a partir do nó {start_node}.")
+
     visited = set()
     queue = [start_node]
     visited.add(start_node)
@@ -24,15 +31,31 @@ def is_eulerian(graph):
                 
     for u in graph:
         if len(graph[u]) > 0 and u not in visited:
+            if verbose:
+                print("  Grafo é desconexo!")
             return "Não Euleriano (Grafo Desconexo)"
             
-    odd_degrees = sum(1 for u in graph if len(graph[u]) % 2 != 0)
+    if verbose:
+        print(f"  Grafo é conexo (todos os {len(graph)} nós são alcançáveis).")
+        print("Passo 2: Contar nós de grau ímpar.")
+
+    odd_nodes = [u for u in graph if len(graph[u]) % 2 != 0]
+    odd_degrees = len(odd_nodes)
     
+    if verbose:
+        print(f"  Nós com grau ímpar ({odd_degrees} no total): {odd_nodes}")
+
     if odd_degrees == 0:
+        if verbose:
+            print("  Como não há nós com grau ímpar, o grafo é Euleriano.")
         return "Euleriano (Possui Circuito Euleriano)"
     elif odd_degrees == 2:
+        if verbose:
+            print("  Como há exatamente 2 nós com grau ímpar, o grafo é Semi-Euleriano.")
         return "Semi-Euleriano (Possui Caminho Euleriano)"
     else:
+        if verbose:
+            print("  Como há mais de 2 nós de grau ímpar, o grafo não é Euleriano.")
         return "Não Euleriano"
 
 if __name__ == "__main__":

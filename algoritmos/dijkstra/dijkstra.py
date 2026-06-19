@@ -1,22 +1,35 @@
 import heapq
 
-def dijkstra(graph, start, weights):
+def dijkstra(graph, start, weights, verbose=False):
     """
     Algoritmo de Dijkstra.
     Calcula as menores distâncias a partir de um vértice inicial em um grafo com pesos não-negativos.
     """
+    if verbose:
+        print(f"Dijkstra: primeiro definimos distância 0 para a origem {start} e infinito para os outros.")
     dist = {u: float('inf') for u in graph}
     dist[start] = 0
-    pq = [(0, start)]
+    pq = [(0.0, start)]
+    step = 1
     while pq:
         d, u = heapq.heappop(pq)
         if d > dist[u]:
             continue
+        if verbose:
+            print(f"Passo {step}: Escolhemos o nó {u} com distância acumulada {d:.1f}")
         for v in graph.get(u, []):
             w = weights.get((u, v), 1.0)
             if dist[u] + w < dist[v]:
+                old_d = dist[v]
                 dist[v] = dist[u] + w
                 heapq.heappush(pq, (dist[v], v))
+                if verbose:
+                    print(f"  Atualizando nó {v}: distância anterior era {old_d}, nova distância é {dist[v]:.1f} (via nó {u}, peso {w:.1f})")
+        step += 1
+    if verbose:
+        print("Distâncias mínimas finais encontradas:")
+        for dest in sorted(dist.keys()):
+            print(f"  De {start} a {dest}: {dist[dest]:.1f}")
     return dist
 
 if __name__ == "__main__":

@@ -4,27 +4,21 @@ import random
 import numpy as np
 import networkx as nx
 
-# Adicionar o diretório raiz ao path
+# Adiciona o diretório raiz ao path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-# ──────────────────────────────────────────────
-# REPRESENTAÇÃO DO GRAFO E AUXILIARES
-# ──────────────────────────────────────────────
+# Carrega o grafo do Zachary's Karate Club
 G = nx.karate_club_graph()
 N = len(G.nodes())
 M = len(G.edges())
 
-# Adjacency list from scratch
+# Converte o grafo para uma lista de adjacência (dicionário de listas)
 def get_adj_list(graph_nx):
     return {u: list(graph_nx.neighbors(u)) for u in graph_nx.nodes()}
 
 adj_list = get_adj_list(G)
 
-# ──────────────────────────────────────────────
-# ALGORITMOS DE GRAFO DESDE O INÍCIO (FROM SCRATCH)
-# ──────────────────────────────────────────────
-
-# 1. BFS para distância mínima de um nó para todos os outros
+# Implementação da BFS para calcular a menor distância de um nó inicial para todos os outros
 def bfs_distances(graph, start):
     dist = {u: float('inf') for u in graph}
     dist[start] = 0
@@ -37,7 +31,7 @@ def bfs_distances(graph, start):
                 queue.append(v)
     return dist
 
-# 2. Comprimento Médio dos Caminhos (L)
+# Calcula o comprimento médio dos caminhos mínimos (L) no grafo
 def average_path_length(graph):
     total_dist = 0
     pairs = 0
@@ -52,7 +46,7 @@ def average_path_length(graph):
         return float('inf')
     return total_dist / pairs
 
-# 3. Coeficiente de Clusterização Local e Médio (C)
+# Calcula o coeficiente de clusterização médio (C) do grafo
 def clustering_coefficient(graph):
     c_vals = {}
     for u in graph:
@@ -72,7 +66,7 @@ def clustering_coefficient(graph):
         c_vals[u] = edges_between_neighbors / possible_edges
     return np.mean(list(c_vals.values()))
 
-# 4. Encontrar componentes conexos
+# Identifica as componentes conexas do grafo
 def get_connected_components(graph):
     visited = set()
     components = []
@@ -91,11 +85,7 @@ def get_connected_components(graph):
             components.append(comp)
     return components
 
-# ──────────────────────────────────────────────
-# APÊNDICE A: PROPRIEDADE SMALL-WORLD
-# ──────────────────────────────────────────────
-
-# Gerar grafo aleatório G(N, M) conexo
+# Gera um grafo aleatório conexo de Erdos-Renyi com N nós e M arestas
 def generate_random_connected_graph(num_nodes, num_edges):
     while True:
         rand_graph = {i: [] for i in range(num_nodes)}
@@ -107,10 +97,12 @@ def generate_random_connected_graph(num_nodes, num_edges):
         if len(get_connected_components(rand_graph)) == 1:
             return rand_graph
 
+# Análise da Propriedade Small-World ---
 print("Calculando propriedade Small-world...")
 C_obs = clustering_coefficient(adj_list)
 L_obs = average_path_length(adj_list)
 
+# Gera 100 grafos aleatórios equivalentes para comparação estatística
 C_rands = []
 L_rands = []
 for _ in range(100):
@@ -120,16 +112,13 @@ for _ in range(100):
 
 C_rand = np.mean(C_rands)
 L_rand = np.mean(L_rands)
-
 sigma_sw = (C_obs / C_rand) / (L_obs / L_rand)
 
 print(f"C_obs: {C_obs:.4f} | C_rand: {C_rand:.4f} | Razão C: {C_obs/C_rand:.4f}")
 print(f"L_obs: {L_obs:.4f} | L_rand: {L_rand:.4f} | Razão L: {L_obs/L_rand:.4f}")
 print(f"Small-worldness sigma: {sigma_sw:.4f}")
 
-# ──────────────────────────────────────────────
-# APÊNDICE B: LEI DE POTÊNCIA
-# ──────────────────────────────────────────────
+# Análise da Distribuição de Graus (Lei de Potência) ---
 print("\nAnálise de Lei de Potência...")
 degrees = [len(adj_list[u]) for u in adj_list]
 unique_degrees, counts = np.unique(degrees, return_counts=True)
@@ -139,16 +128,14 @@ slope, intercept = np.polyfit(log_k, log_freq, 1)
 gamma = -slope
 print(f"Expoente gamma estimado via log-log linear: {gamma:.4f}")
 
-# ──────────────────────────────────────────────
-# APÊNDICE C: ROBUSTEZ DA REDE
-# ──────────────────────────────────────────────
+# Simulações de Robustez da Rede (Falha vs Ataque) ---
 print("\nSimulações de Robustez da Rede...")
-
-num_to_remove = int(round(N * 0.05))
+num_to_remove = int(round(N * 0.05)) # Remoção de 5% dos nós
 random_trials = 1000
 lcc_sizes_rand = []
 l_vals_rand = []
 
+# Simulação de Falhas (remoção de nós aleatórios)
 for _ in range(random_trials):
     nodes_to_remove = random.sample(list(adj_list.keys()), num_to_remove)
     subgraph = {u: [v for v in adj_list[u] if v not in nodes_to_remove] 
@@ -170,7 +157,7 @@ print(f"Remoção Aleatória (5% = {num_to_remove} nós):")
 print(f"  Tamanho médio do LCC: {avg_lcc_size_rand:.2f} nós (original: {N})")
 print(f"  Caminho médio no LCC: {avg_l_rand:.4f} saltos (original: {L_obs:.4f})")
 
-# B. Remoção dos 5% mais centrais
+# Simulação de Ataque Direcionado (remoção dos nós mais centrais)
 degrees_sorted = sorted([(len(adj_list[u]), u) for u in adj_list], reverse=True)
 nodes_central = [u for deg, u in degrees_sorted[:num_to_remove]]
 print(f"Nós mais centrais removidos: {nodes_central} (graus: {[len(adj_list[u]) for u in nodes_central]})")

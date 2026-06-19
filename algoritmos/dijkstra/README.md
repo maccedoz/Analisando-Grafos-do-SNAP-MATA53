@@ -4,13 +4,13 @@ Calcula o caminho mínimo de uma origem para todos os outros nós em grafos com 
 
 ---
 
-## ▶️ Como Executar
+## Como Executar
 
 ```bash
 python3 algoritmos/dijkstra/dijkstra.py
 ```
 
-## 📋 Saída Esperada (Zachary's Karate Club, origem: nó 0)
+## Saída Esperada (Zachary's Karate Club, origem: nó 0)
 
 ```
 Dijkstra — Zachary's Karate Club (origem: nó 0 / Mr. Hi)

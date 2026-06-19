@@ -1,17 +1,35 @@
-def dfs(graph, start):
+def dfs(graph, start, verbose=False):
     """
     Busca em Profundidade (DFS).
     Retorna a ordem de visitação dos vértices a partir de um vértice inicial.
     """
     visited = set()
     order = []
-    def dfs_visit(u):
+    step = 1
+    if verbose:
+        print(f"DFS (Busca em Profundidade): primeiro chegamos no nó {start}")
+        
+    def dfs_visit(u, depth=1):
+        nonlocal step
         visited.add(u)
         order.append(u)
-        for v in graph.get(u, []):
+        indent = "  " * depth
+        neighbors = graph.get(u, [])
+        if verbose:
+            print(f"Passo {step}:{indent}Chegamos no nó {u}. Vizinhos: {neighbors}")
+        step += 1
+        for v in neighbors:
             if v not in visited:
-                dfs_visit(v)
+                if verbose:
+                    print(f"{indent}  O vizinho {v} não foi visitado. Indo para o nó {v}...")
+                dfs_visit(v, depth + 1)
+            else:
+                if verbose:
+                    print(f"{indent}  O vizinho {v} já foi visitado.")
+                    
     dfs_visit(start)
+    if verbose:
+        print(f"Todos os {len(visited)} nós foram visitados na ordem: {order}")
     return order
 
 if __name__ == "__main__":

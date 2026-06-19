@@ -1,4 +1,4 @@
-def tarjan_scc(graph):
+def tarjan_scc(graph, verbose=False):
     """
     Algoritmo de Tarjan.
     Encontra as componentes fortemente conexas (SCCs) de um grafo direcionado.
@@ -9,14 +9,22 @@ def tarjan_scc(graph):
     on_stack = set()
     stack = []
     sccs = []
+    step = 1
     
+    if verbose:
+        print("Tarjan: primeiro inicializamos a busca em profundidade para encontrar componentes fortemente conexos.")
+
     def strongconnect(u):
-        nonlocal index_counter
+        nonlocal index_counter, step
         indices[u] = index_counter
         lowlink[u] = index_counter
         index_counter += 1
         stack.append(u)
         on_stack.add(u)
+        
+        if verbose:
+            print(f"Passo {step}: DFS visita o nó {u}. index={indices[u]}, lowlink={lowlink[u]}")
+        step += 1
         
         for v in graph.get(u, []):
             if v not in indices:
@@ -34,10 +42,15 @@ def tarjan_scc(graph):
                 if v == u:
                     break
             sccs.append(scc)
+            if verbose:
+                print(f"  Encontrado componente fortemente conexo: {sorted(scc)}")
             
     for u in graph:
         if u not in indices:
             strongconnect(u)
+            
+    if verbose:
+        print(f"Total de componentes encontrados: {len(sccs)}")
             
     return sccs
 
