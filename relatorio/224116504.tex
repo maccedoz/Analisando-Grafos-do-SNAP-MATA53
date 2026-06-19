@@ -72,7 +72,15 @@ Este relatório divide-se nas três partes requeridas para a avaliação: a cara
 
 \section{Metodologia e Tratamento de Dados}
 
-O grafo original do clube de caratê de Zachary foi obtido diretamente da biblioteca NetworkX (\path{nx.karate_club_graph()}), onde a rede é modelada como um grafo não-ponderado, não-direcionado e simples, composto por 34 nós (rotulados de 0 a 33) e 78 arestas.
+A escolha do grafo a ser analisado foi definida a partir do número de matrícula do estudante ($M = 224116504$), seguindo a regra de mapeamento da disciplina:
+\begin{equation}
+    f(M) = ((\text{soma dos dígitos de } M) \times (\text{últimos 2 dígitos de } M + 1)) \bmod 129
+\end{equation}
+Para a matrícula $224116504$, a soma dos dígitos é $2+2+4+1+1+6+5+0+4 = 25$ e os dois últimos dígitos são $04$ (ou seja, $4$). O cálculo resulta em:
+\begin{equation}
+    f(224116504) = (25 \times (4 + 1)) \bmod 129 = 125 \bmod 129 = 125
+\end{equation}
+Como o resultado é $125$, o grafo selecionado na planilha da disciplina foi o \textbf{G125}, que corresponde à rede clássica do clube de caratê de Zachary (\textit{Zachary's Karate Club}). O grafo original foi obtido diretamente da biblioteca NetworkX (\path{nx.karate_club_graph()}), onde a rede é modelada como um grafo não-ponderado, não-direcionado e simples, composto por 34 nós (rotulados de 0 a 33) e 78 arestas.
 
 \subsection{Tabela de Tratamentos Realizados}
 
@@ -365,6 +373,11 @@ A Tabela \ref{tab:robustness} descreve os impactos dessas remoções obtidos atr
 A rede mostra um comportamento típico de sistemas que dependem de nós principais (hubs). Ela tem uma grande \textbf{resistência a falhas aleatórias}: ao remover nós ao acaso, a rede quase não sofre impacto, mantendo a maior parte conectada com média de $31,55$ nós (dos $32$ possíveis) e com um aumento muito pequeno na distância média (de $2,408$ para $2,415$). Por outro lado, a rede é \textbf{muito frágil contra ataques direcionados}: remover os hubs 0 e 33 muda completamente a estrutura, quebrando a conexão da rede e dividindo o grafo em três partes isoladas (uma de tamanho 26, uma de tamanho 5 e um nó sozinho), e aumentando a distância média para $2,591$ na parte principal.
 
 Os algoritmos e funções auxiliares (como a busca em largura modificada para identificação de componentes conexos) e o loop principal de simulação numérica por Monte Carlo estão definidos em detalhes no script \path{scripts/analise_estrutural.py}.
+
+\section{Discussão Crítica}
+\label{sec:discussao_critica}
+
+Nesta seção, apresenta-se uma discussão crítica relacionando as métricas obtidas na análise estrutural e algorítmica com a dinâmica sociológica real do clube de caratê, além de avaliar a adequação dos modelos matemáticos clássicos para descrever essa rede.
 
 \subsection{Comparação com Modelos Clássicos}
 \label{subsec:modelos_classicos}
